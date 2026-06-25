@@ -1,0 +1,16 @@
+project_id = "mindquest"
+
+[api]
+port = 54321
+
+[db]
+port = 54322
+
+[studio]
+port = 54323
+
+[inbucket]
+port = 54324
+
+[storage]
+buckets = ["book-covers", "user-avatars", "lesson-media", "lottie-animations"]
