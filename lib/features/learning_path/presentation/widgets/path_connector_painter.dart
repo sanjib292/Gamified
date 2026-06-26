@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_colors.dart';
+import '../../../../shared/widgets/cards/lesson_node_card.dart';
 import '../../data/models/learning_path_model.dart';
 
 /// Draws connecting lines between lesson nodes on the learning path map.
