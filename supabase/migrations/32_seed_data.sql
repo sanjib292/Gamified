@@ -34,21 +34,21 @@ ON CONFLICT (id) DO NOTHING;
 INSERT INTO learning_paths (id, book_id, title, description, sort_order)
 VALUES
     (
-        'lp100000-0000-0000-0000-000000000001',
+        'a0100000-0000-0000-0000-000000000001',
         'b1000000-0000-0000-0000-000000000001',
         'Foundations',
         'Core ideas about how people think about and interact with money.',
         1
     ),
     (
-        'lp100000-0000-0000-0000-000000000002',
+        'a0100000-0000-0000-0000-000000000002',
         'b1000000-0000-0000-0000-000000000001',
         'Core Principles',
         'Deep dives into the mental models that drive financial decisions.',
         2
     ),
     (
-        'lp100000-0000-0000-0000-000000000003',
+        'a0100000-0000-0000-0000-000000000003',
         'b1000000-0000-0000-0000-000000000001',
         'Mastery',
         'Applying the psychology of money to long-term financial wellbeing.',
@@ -66,41 +66,41 @@ INSERT INTO lessons (
 )
 VALUES
     (
-        'le100000-0000-0000-0000-000000000001',
+        'be100000-0000-0000-0000-000000000001',
         'b1000000-0000-0000-0000-000000000001',
-        'lp100000-0000-0000-0000-000000000001',
+        'a0100000-0000-0000-0000-000000000001',
         'No One''s Crazy',
         'Everyone has a unique experience of money shaped by their generation, upbringing, and luck. Understanding this prevents us from judging others — or ourselves — too harshly.',
         1, 8, 'beginner', true, true, 50
     ),
     (
-        'le100000-0000-0000-0000-000000000002',
+        'be100000-0000-0000-0000-000000000002',
         'b1000000-0000-0000-0000-000000000001',
-        'lp100000-0000-0000-0000-000000000001',
+        'a0100000-0000-0000-0000-000000000001',
         'Luck & Risk',
         'Nothing is as good or as bad as it seems. Luck and risk are siblings — both the invisible forces that shape every financial outcome, often indistinguishable from skill.',
         2, 9, 'beginner', true, false, 50
     ),
     (
-        'le100000-0000-0000-0000-000000000003',
+        'be100000-0000-0000-0000-000000000003',
         'b1000000-0000-0000-0000-000000000001',
-        'lp100000-0000-0000-0000-000000000001',
+        'a0100000-0000-0000-0000-000000000001',
         'Never Enough',
         'The hardest financial skill is getting the goalpost to stop moving. Social comparison and the insatiable desire for more are the enemies of contentment and sound financial decisions.',
         3, 7, 'beginner', true, false, 50
     ),
     (
-        'le100000-0000-0000-0000-000000000004',
+        'be100000-0000-0000-0000-000000000004',
         'b1000000-0000-0000-0000-000000000001',
-        'lp100000-0000-0000-0000-000000000001',
+        'a0100000-0000-0000-0000-000000000001',
         'Confounding Compounding',
         'Warren Buffett''s secret is not just his returns — it''s time. The counter-intuitive power of compounding only becomes visible across decades, not quarters.',
         4, 10, 'beginner', true, false, 60
     ),
     (
-        'le100000-0000-0000-0000-000000000005',
+        'be100000-0000-0000-0000-000000000005',
         'b1000000-0000-0000-0000-000000000001',
-        'lp100000-0000-0000-0000-000000000001',
+        'a0100000-0000-0000-0000-000000000001',
         'Getting Wealthy vs Staying Wealthy',
         'Getting money and keeping money are two different skills. Getting money requires optimism and risk. Keeping it requires humility, frugality, and the acceptance that some gains were luck.',
         5, 11, 'beginner', true, false, 60
@@ -114,8 +114,8 @@ INSERT INTO lesson_content (
     id, lesson_id, content_type, sort_order, content, title
 )
 VALUES (
-    'lc100000-0000-0000-0000-000000000001',
-    'le100000-0000-0000-0000-000000000001',
+    'ac100000-0000-0000-0000-000000000001',
+    'be100000-0000-0000-0000-000000000001',
     'quiz',
     1,
     '{
