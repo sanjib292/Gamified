@@ -99,7 +99,7 @@ Future<ProfileStats> _loadProfile(
 
   final streakFuture = supabase
       .from('streaks')
-      .select('current_days, longest_days, active_dates')
+      .select('current_streak, longest_streak, weekly_activity')
       .eq('user_id', userId)
       .maybeSingle();
 
@@ -151,11 +151,12 @@ Future<ProfileStats> _loadProfile(
   final streak = streakRow != null
       ? Streak(
           currentDays:
-              (streakRow['current_days'] as num?)?.toInt() ?? 0,
+              (streakRow['current_streak'] as num?)?.toInt() ?? 0,
           longestDays:
-              (streakRow['longest_days'] as num?)?.toInt() ?? 0,
+              (streakRow['longest_streak'] as num?)?.toInt() ?? 0,
+          // weekly_activity is a JSONB map of {date: count}; extract the keys as active dates
           activeDates: List<String>.from(
-              streakRow['active_dates'] as List? ?? []),
+              (streakRow['weekly_activity'] as Map?)?.keys.toList() ?? []),
         )
       : const Streak(currentDays: 0, longestDays: 0);
 
