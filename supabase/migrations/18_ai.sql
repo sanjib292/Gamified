@@ -7,7 +7,7 @@
 -- -----------------------------------------------------------------------------
 -- ai_conversations
 -- -----------------------------------------------------------------------------
-CREATE TABLE IF NOT EXISTS IF NOT EXISTS ai_conversations (
+CREATE TABLE IF NOT EXISTS ai_conversations (
     id              UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id         UUID        NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
     lesson_id       UUID        REFERENCES lessons(id) ON DELETE SET NULL,
@@ -22,18 +22,18 @@ CREATE TABLE IF NOT EXISTS IF NOT EXISTS ai_conversations (
     CONSTRAINT ai_conversations_title_not_empty       CHECK (char_length(trim(title)) > 0)
 );
 
-CREATE INDEX IF NOT EXISTS IF NOT EXISTS idx_ai_conversations_user_id
+CREATE INDEX IF NOT EXISTS idx_ai_conversations_user_id
     ON ai_conversations (user_id);
 
-CREATE INDEX IF NOT EXISTS IF NOT EXISTS idx_ai_conversations_lesson_id
+CREATE INDEX IF NOT EXISTS idx_ai_conversations_lesson_id
     ON ai_conversations (lesson_id)
     WHERE lesson_id IS NOT NULL;
 
-CREATE INDEX IF NOT EXISTS IF NOT EXISTS idx_ai_conversations_book_id
+CREATE INDEX IF NOT EXISTS idx_ai_conversations_book_id
     ON ai_conversations (book_id)
     WHERE book_id IS NOT NULL;
 
-CREATE INDEX IF NOT EXISTS IF NOT EXISTS idx_ai_conversations_last_message_at
+CREATE INDEX IF NOT EXISTS idx_ai_conversations_last_message_at
     ON ai_conversations (user_id, last_message_at DESC NULLS LAST);
 
 COMMENT ON TABLE  ai_conversations                  IS 'AI chat sessions optionally scoped to a lesson or book.';
@@ -45,7 +45,7 @@ COMMENT ON COLUMN ai_conversations.last_message_at  IS 'Timestamp of the most re
 -- -----------------------------------------------------------------------------
 -- ai_messages
 -- -----------------------------------------------------------------------------
-CREATE TABLE IF NOT EXISTS IF NOT EXISTS ai_messages (
+CREATE TABLE IF NOT EXISTS ai_messages (
     id              UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
     conversation_id UUID        NOT NULL REFERENCES ai_conversations(id) ON DELETE CASCADE,
     role            TEXT        NOT NULL CHECK (role IN ('user', 'assistant', 'system')),
@@ -60,17 +60,17 @@ CREATE TABLE IF NOT EXISTS IF NOT EXISTS ai_messages (
 );
 
 -- Covering index for conversation message list (most common query pattern)
-CREATE INDEX IF NOT EXISTS IF NOT EXISTS idx_ai_messages_conversation_created
+CREATE INDEX IF NOT EXISTS idx_ai_messages_conversation_created
     ON ai_messages (conversation_id, created_at DESC);
 
 -- Partial index for filtering by role
-CREATE INDEX IF NOT EXISTS IF NOT EXISTS idx_ai_messages_role
+CREATE INDEX IF NOT EXISTS idx_ai_messages_role
     ON ai_messages (role, created_at DESC);
 
 -- IVFFlat approximate nearest-neighbour index for semantic search over message embeddings.
 -- lists=100 is appropriate for tables expected to grow into the hundreds of thousands of rows.
 -- Re-run ANALYZE after bulk inserts for optimal probe count.
-CREATE INDEX IF NOT EXISTS IF NOT EXISTS idx_ai_messages_embedding_ivfflat
+CREATE INDEX IF NOT EXISTS idx_ai_messages_embedding_ivfflat
     ON ai_messages
     USING ivfflat (embedding vector_cosine_ops)
     WITH (lists = 100);

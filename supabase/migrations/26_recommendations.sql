@@ -3,7 +3,7 @@
 -- ML / rule-based content recommendations for each user
 -- =============================================================================
 
-CREATE TABLE IF NOT EXISTS IF NOT EXISTS recommendations (
+CREATE TABLE IF NOT EXISTS recommendations (
     id              UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id         UUID        NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
     item_type       TEXT        NOT NULL CHECK (item_type IN ('book', 'lesson')),
@@ -23,16 +23,16 @@ CREATE TABLE IF NOT EXISTS IF NOT EXISTS recommendations (
 );
 
 -- Primary feed query: undismissed, non-expired recs for a user, highest score first
-CREATE INDEX IF NOT EXISTS IF NOT EXISTS idx_recommendations_user_active
+CREATE INDEX IF NOT EXISTS idx_recommendations_user_active
     ON recommendations (user_id, score DESC, is_dismissed, expires_at)
     WHERE is_dismissed = false;
 
 -- Filter by content type
-CREATE INDEX IF NOT EXISTS IF NOT EXISTS idx_recommendations_user_type
+CREATE INDEX IF NOT EXISTS idx_recommendations_user_type
     ON recommendations (user_id, item_type, is_dismissed, expires_at);
 
 -- Support expiry sweeps (background job to purge/regenerate stale recs)
-CREATE INDEX IF NOT EXISTS IF NOT EXISTS idx_recommendations_expires_at
+CREATE INDEX IF NOT EXISTS idx_recommendations_expires_at
     ON recommendations (expires_at)
     WHERE expires_at IS NOT NULL AND is_dismissed = false;
 

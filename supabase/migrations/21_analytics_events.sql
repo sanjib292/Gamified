@@ -14,7 +14,7 @@
 --     migration to partitioned tables via pg_partman attach/detach.
 -- =============================================================================
 
-CREATE TABLE IF NOT EXISTS IF NOT EXISTS analytics_events (
+CREATE TABLE IF NOT EXISTS analytics_events (
     id          UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
     -- Nullable: anonymous events are captured before the user authenticates
     user_id     UUID        REFERENCES profiles(id) ON DELETE SET NULL,
@@ -29,20 +29,20 @@ CREATE TABLE IF NOT EXISTS IF NOT EXISTS analytics_events (
 );
 
 -- Index for filtering events by name (e.g. funnel queries)
-CREATE INDEX IF NOT EXISTS IF NOT EXISTS idx_analytics_events_event_name
+CREATE INDEX IF NOT EXISTS idx_analytics_events_event_name
     ON analytics_events (event_name, created_at DESC);
 
 -- Index for per-user event history
-CREATE INDEX IF NOT EXISTS IF NOT EXISTS idx_analytics_events_user_id
+CREATE INDEX IF NOT EXISTS idx_analytics_events_user_id
     ON analytics_events (user_id, created_at DESC)
     WHERE user_id IS NOT NULL;
 
 -- Chronological scan index (used by time-range dashboards)
-CREATE INDEX IF NOT EXISTS IF NOT EXISTS idx_analytics_events_created_at
+CREATE INDEX IF NOT EXISTS idx_analytics_events_created_at
     ON analytics_events (created_at DESC);
 
 -- GIN index for arbitrary property filtering (e.g. properties->>'source' = 'onboarding')
-CREATE INDEX IF NOT EXISTS IF NOT EXISTS idx_analytics_events_properties_gin
+CREATE INDEX IF NOT EXISTS idx_analytics_events_properties_gin
     ON analytics_events USING gin (properties);
 
 COMMENT ON TABLE  analytics_events              IS 'Append-only structured event log. Never update or delete rows.';

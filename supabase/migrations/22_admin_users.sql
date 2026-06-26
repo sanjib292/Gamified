@@ -3,7 +3,7 @@
 -- Admin role assignments; references auth.users directly for bootstrapping
 -- =============================================================================
 
-CREATE TABLE IF NOT EXISTS IF NOT EXISTS admin_users (
+CREATE TABLE IF NOT EXISTS admin_users (
     id          UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id     UUID        NOT NULL UNIQUE REFERENCES auth.users(id) ON DELETE CASCADE,
     role        TEXT        NOT NULL DEFAULT 'content_editor'
@@ -15,11 +15,11 @@ CREATE TABLE IF NOT EXISTS IF NOT EXISTS admin_users (
 );
 
 -- Lookup by user_id (covered by UNIQUE; explicit index for partial queries)
-CREATE INDEX IF NOT EXISTS IF NOT EXISTS idx_admin_users_user_id
+CREATE INDEX IF NOT EXISTS idx_admin_users_user_id
     ON admin_users (user_id);
 
 -- Filter active admins by role (used in permission checks)
-CREATE INDEX IF NOT EXISTS IF NOT EXISTS idx_admin_users_role_active
+CREATE INDEX IF NOT EXISTS idx_admin_users_role_active
     ON admin_users (role, is_active)
     WHERE is_active = true;
 
