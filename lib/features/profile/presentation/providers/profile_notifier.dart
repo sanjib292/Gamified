@@ -118,7 +118,7 @@ Future<ProfileStats> _loadProfile(
 
   final completedBooksFuture = supabase
       .from('user_progress')
-      .select('book_id, books(id, title, author, cover_url, difficulty)')
+      .select('lessons(book_id, books(id, title, author, cover_url, difficulty))')
       .eq('user_id', userId)
       .eq('status', 'completed');
 
@@ -179,9 +179,15 @@ Future<ProfileStats> _loadProfile(
     );
   }).toList();
 
-  final completedBooks = completedBookRows.map<Book>((row) {
-    final bookRow = row['books'] as Map<String, dynamic>;
-    return _rowToBook(bookRow);
+  // user_progress → lessons → books (two hops, deduplicate by id)
+  final seenBookIds = <String>{};
+  final completedBooks = completedBookRows.expand<Book>((row) {
+    final lessonRow = row['lessons'] as Map<String, dynamic>?;
+    final bookRow = lessonRow?['books'] as Map<String, dynamic>?;
+    if (bookRow == null) return const [];
+    final bookId = bookRow['id'] as String;
+    if (!seenBookIds.add(bookId)) return const [];
+    return [_rowToBook(bookRow)];
   }).toList();
 
   return ProfileStats(
