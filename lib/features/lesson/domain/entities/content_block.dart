@@ -233,7 +233,11 @@ sealed class ContentBlock {
   /// Factory that maps a [type] string to the correct subclass.
   static ContentBlock fromJson(Map<String, dynamic> json, String type) =>
       switch (type) {
-        'quiz' => QuizBlock(quiz: Quiz.fromJson(json)),
+        'quiz' => QuizBlock(
+            questions: (json['questions'] as List<dynamic>? ?? [])
+                .map((q) => Quiz.fromJson(q as Map<String, dynamic>))
+                .toList(),
+          ),
         'flashcard' => FlashcardBlock(
             deck: FlashcardDeck.fromJson(json)),
         'story_mission' => StoryMissionBlock(
@@ -247,8 +251,8 @@ sealed class ContentBlock {
 }
 
 class QuizBlock extends ContentBlock {
-  const QuizBlock({required this.quiz});
-  final Quiz quiz;
+  const QuizBlock({required this.questions});
+  final List<Quiz> questions;
 }
 
 class FlashcardBlock extends ContentBlock {

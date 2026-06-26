@@ -161,9 +161,9 @@ class _ContentView extends StatelessWidget {
     return SingleChildScrollView(
       physics: const BouncingScrollPhysics(),
       child: switch (block) {
-        QuizBlock(:final quiz) => Consumer(
+        QuizBlock(:final questions) => Consumer(
             builder: (context, ref, _) => QuizWidget(
-              block: QuizBlock(quiz: quiz),
+              block: QuizBlock(questions: questions),
               onAnswered: (isCorrect, xp) =>
                   onScoreUpdate(isCorrect ? 100 : 50, xp),
             ),
@@ -253,7 +253,7 @@ class _ChallengeViewState extends State<_ChallengeView> {
     }
 
     return QuizWidget(
-      block: QuizBlock(quiz: questions[_current]),
+      block: QuizBlock(questions: [questions[_current]]),
       onAnswered: (isCorrect, xp) {
         if (isCorrect) _correct++;
         setState(() {

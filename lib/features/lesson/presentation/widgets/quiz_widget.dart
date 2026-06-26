@@ -25,18 +25,51 @@ class QuizWidget extends StatefulWidget {
 }
 
 class _QuizWidgetState extends State<QuizWidget> {
+  int _currentIndex = 0;
   int? _selectedIndex;
   bool _answered = false;
+  int _correctCount = 0;
 
-  Quiz get _quiz => widget.block.quiz;
+  Quiz get _quiz => widget.block.questions[_currentIndex];
+  int get _total => widget.block.questions.length;
 
   @override
   Widget build(BuildContext context) {
+    if (widget.block.questions.isEmpty) {
+      return const Padding(
+        padding: EdgeInsets.all(32),
+        child: Center(child: Text('No questions available.')),
+      );
+    }
+
     return Padding(
       padding: AppSpacing.paddingMd,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          // Progress indicator for multi-question quizzes
+          if (_total > 1) ...[
+            Row(
+              children: [
+                Text(
+                  'Question ${_currentIndex + 1} of $_total',
+                  style: AppTextStyles.labelSmall
+                      .copyWith(color: AppColors.textSecondary),
+                ),
+              ],
+            ),
+            const SizedBox(height: AppSpacing.sm),
+            LinearProgressIndicator(
+              value: (_currentIndex + 1) / _total,
+              backgroundColor: AppColors.surfaceVariant,
+              valueColor:
+                  const AlwaysStoppedAnimation<Color>(AppColors.primary),
+              minHeight: 4,
+              borderRadius: AppSpacing.borderRadiusFull,
+            ),
+            const SizedBox(height: AppSpacing.md),
+          ],
+
           // Question
           Container(
             padding: AppSpacing.cardPadding,
@@ -68,10 +101,25 @@ class _QuizWidgetState extends State<QuizWidget> {
             );
           }),
 
-          // Explanation
-          if (_answered && _quiz.explanation != null) ...[
-            const SizedBox(height: AppSpacing.md),
-            _ExplanationCard(text: _quiz.explanation!),
+          // Explanation + Next button
+          if (_answered) ...[
+            if (_quiz.explanation != null) ...[
+              const SizedBox(height: AppSpacing.md),
+              _ExplanationCard(text: _quiz.explanation!),
+            ],
+            if (_currentIndex < _total - 1) ...[
+              const SizedBox(height: AppSpacing.md),
+              ElevatedButton(
+                onPressed: _advance,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primary,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: AppSpacing.borderRadiusFull),
+                ),
+                child: const Text('Next Question'),
+              ),
+            ],
           ],
         ],
       ),
@@ -84,7 +132,19 @@ class _QuizWidgetState extends State<QuizWidget> {
       _answered = true;
     });
     final isCorrect = index == _quiz.correctIndex;
-    widget.onAnswered(isCorrect, isCorrect ? 20 : 5);
+    if (isCorrect) _correctCount++;
+    // Only report to parent after the last question
+    if (_currentIndex == _total - 1) {
+      widget.onAnswered(isCorrect || _correctCount > 0, _correctCount * 20);
+    }
+  }
+
+  void _advance() {
+    setState(() {
+      _currentIndex++;
+      _selectedIndex = null;
+      _answered = false;
+    });
   }
 }
 
