@@ -42,7 +42,7 @@ const _kPageSize = 20;
 ///
 /// Rebuilt automatically whenever [searchQueryProvider] or [activeFilterProvider]
 /// change. The UI can trigger a next-page load via [loadNextPage()].
-class LibraryNotifier extends AsyncNotifier<List<Book>> {
+class LibraryNotifier extends AutoDisposeAsyncNotifier<List<Book>> {
   int _currentPage = 0;
   bool _hasMore = true;
 

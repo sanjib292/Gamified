@@ -119,15 +119,13 @@ extension AnimationPresets on Widget {
 }
 
 // ---------------------------------------------------------------------------
-// AnimateList extension
+// Staggered list entrance
 // ---------------------------------------------------------------------------
-
-extension AnimateListPresets on AnimateList {
-  /// Staggers children by [stagger] delay intervals — applied on top of any
-  /// existing animate calls.
-  AnimateList staggeredEntrance({
-    Duration stagger = const Duration(milliseconds: 60),
-  }) {
-    return interval(stagger);
-  }
-}
+//
+// To stagger a list of widgets, use flutter_animate's built-in `interval`
+// parameter directly, e.g.:
+//
+//   children.animate(interval: 60.ms).fadeIn().slideY(begin: 0.15)
+//
+// flutter_animate exposes stagger via that named parameter on `.animate(...)`,
+// so no custom extension is needed.
