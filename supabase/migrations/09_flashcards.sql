@@ -2,7 +2,7 @@
 -- MindQuest: Flashcard Decks & Flashcards
 -- ============================================================
 
-CREATE TABLE flashcard_decks (
+CREATE TABLE IF NOT EXISTS flashcard_decks (
     id          UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
     lesson_id   UUID        NOT NULL REFERENCES lessons(id) ON DELETE CASCADE,
     title       TEXT        NOT NULL,
@@ -16,17 +16,18 @@ CREATE TABLE flashcard_decks (
     )
 );
 
+DROP TRIGGER IF EXISTS trg_flashcard_decks_updated_at ON flashcard_decks;
 CREATE TRIGGER trg_flashcard_decks_updated_at
     BEFORE UPDATE ON flashcard_decks
     FOR EACH ROW EXECUTE FUNCTION trigger_set_updated_at();
 
-CREATE INDEX idx_flashcard_decks_lesson_id ON flashcard_decks (lesson_id);
+CREATE INDEX IF NOT EXISTS idx_flashcard_decks_lesson_id ON flashcard_decks (lesson_id);
 
 -- ============================================================
 -- Flashcards
 -- ============================================================
 
-CREATE TABLE flashcards (
+CREATE TABLE IF NOT EXISTS flashcards (
     id               UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
     deck_id          UUID        NOT NULL REFERENCES flashcard_decks(id) ON DELETE CASCADE,
     front_text       TEXT        NOT NULL,
@@ -38,6 +39,6 @@ CREATE TABLE flashcards (
     created_at       TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
-CREATE INDEX idx_flashcards_deck_id      ON flashcards (deck_id);
-CREATE INDEX idx_flashcards_sort_order   ON flashcards (deck_id, sort_order);
-CREATE INDEX idx_flashcards_tags_gin     ON flashcards USING GIN (tags);
+CREATE INDEX IF NOT EXISTS idx_flashcards_deck_id      ON flashcards (deck_id);
+CREATE INDEX IF NOT EXISTS idx_flashcards_sort_order   ON flashcards (deck_id, sort_order);
+CREATE INDEX IF NOT EXISTS idx_flashcards_tags_gin     ON flashcards USING GIN (tags);

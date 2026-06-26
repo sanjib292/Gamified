@@ -2,7 +2,7 @@
 -- MindQuest: Categories
 -- ============================================================
 
-CREATE TABLE categories (
+CREATE TABLE IF NOT EXISTS categories (
     id          UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
     name        TEXT        UNIQUE NOT NULL,
     slug        TEXT        UNIQUE NOT NULL,
@@ -14,9 +14,9 @@ CREATE TABLE categories (
     created_at  TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
-CREATE INDEX idx_categories_slug      ON categories (slug);
-CREATE INDEX idx_categories_is_active ON categories (is_active);
-CREATE INDEX idx_categories_sort      ON categories (sort_order);
+CREATE INDEX IF NOT EXISTS idx_categories_slug      ON categories (slug);
+CREATE INDEX IF NOT EXISTS idx_categories_is_active ON categories (is_active);
+CREATE INDEX IF NOT EXISTS idx_categories_sort      ON categories (sort_order);
 
 -- ============================================================
 -- Seed: 10 default categories

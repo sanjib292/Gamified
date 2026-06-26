@@ -4,7 +4,7 @@
 -- Best / current progress state lives in user_progress.
 -- =============================================================================
 
-CREATE TABLE IF NOT EXISTS lesson_attempts (
+CREATE TABLE IF NOT EXISTS IF NOT EXISTS lesson_attempts (
     id               UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id          UUID        NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
     lesson_id        UUID        NOT NULL REFERENCES lessons(id) ON DELETE CASCADE,
@@ -28,19 +28,19 @@ CREATE TABLE IF NOT EXISTS lesson_attempts (
 );
 
 -- Per-user attempt history for a lesson (e.g. "show my previous attempts")
-CREATE INDEX IF NOT EXISTS idx_lesson_attempts_user_lesson_created
+CREATE INDEX IF NOT EXISTS IF NOT EXISTS idx_lesson_attempts_user_lesson_created
     ON lesson_attempts (user_id, lesson_id, created_at DESC);
 
 -- Per-user full attempt history (e.g. "my recent activity")
-CREATE INDEX IF NOT EXISTS idx_lesson_attempts_user_created
+CREATE INDEX IF NOT EXISTS IF NOT EXISTS idx_lesson_attempts_user_created
     ON lesson_attempts (user_id, created_at DESC);
 
 -- Analytics: attempts per lesson across all users
-CREATE INDEX IF NOT EXISTS idx_lesson_attempts_lesson_id
+CREATE INDEX IF NOT EXISTS IF NOT EXISTS idx_lesson_attempts_lesson_id
     ON lesson_attempts (lesson_id, created_at DESC);
 
 -- Filter completed attempts only
-CREATE INDEX IF NOT EXISTS idx_lesson_attempts_completed
+CREATE INDEX IF NOT EXISTS IF NOT EXISTS idx_lesson_attempts_completed
     ON lesson_attempts (user_id, completed, created_at DESC)
     WHERE completed = true;
 

@@ -2,7 +2,7 @@
 -- MindQuest: XP Logs  (append-only ledger — no UPDATE / DELETE)
 -- ============================================================
 
-CREATE TABLE xp_logs (
+CREATE TABLE IF NOT EXISTS xp_logs (
     id          UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id     UUID        NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
     amount      SMALLINT    NOT NULL,
@@ -28,10 +28,12 @@ BEGIN
 END;
 $$;
 
+DROP TRIGGER IF EXISTS trg_xp_logs_no_update ON xp_logs;
 CREATE TRIGGER trg_xp_logs_no_update
     BEFORE UPDATE ON xp_logs
     FOR EACH ROW EXECUTE FUNCTION deny_xp_logs_mutation();
 
+DROP TRIGGER IF EXISTS trg_xp_logs_no_delete ON xp_logs;
 CREATE TRIGGER trg_xp_logs_no_delete
     BEFORE DELETE ON xp_logs
     FOR EACH ROW EXECUTE FUNCTION deny_xp_logs_mutation();
@@ -40,7 +42,7 @@ CREATE TRIGGER trg_xp_logs_no_delete
 -- Indexes
 -- ============================================================
 
-CREATE INDEX idx_xp_logs_user_id    ON xp_logs (user_id);
-CREATE INDEX idx_xp_logs_created_at ON xp_logs (user_id, created_at DESC);
-CREATE INDEX idx_xp_logs_source     ON xp_logs (source);
-CREATE INDEX idx_xp_logs_source_id  ON xp_logs (source_id) WHERE source_id IS NOT NULL;
+CREATE INDEX IF NOT EXISTS idx_xp_logs_user_id    ON xp_logs (user_id);
+CREATE INDEX IF NOT EXISTS idx_xp_logs_created_at ON xp_logs (user_id, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_xp_logs_source     ON xp_logs (source);
+CREATE INDEX IF NOT EXISTS idx_xp_logs_source_id  ON xp_logs (source_id) WHERE source_id IS NOT NULL;

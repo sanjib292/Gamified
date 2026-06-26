@@ -2,7 +2,7 @@
 -- MindQuest: Lessons
 -- ============================================================
 
-CREATE TABLE lessons (
+CREATE TABLE IF NOT EXISTS lessons (
     id                  UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
     learning_path_id    UUID        NOT NULL REFERENCES learning_paths(id) ON DELETE CASCADE,
     -- Denormalized for fast queries without joining learning_paths
@@ -21,6 +21,7 @@ CREATE TABLE lessons (
     updated_at          TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
+DROP TRIGGER IF EXISTS trg_lessons_updated_at ON lessons;
 CREATE TRIGGER trg_lessons_updated_at
     BEFORE UPDATE ON lessons
     FOR EACH ROW EXECUTE FUNCTION trigger_set_updated_at();
@@ -29,14 +30,14 @@ CREATE TRIGGER trg_lessons_updated_at
 -- Indexes
 -- ============================================================
 
-CREATE INDEX idx_lessons_learning_path_id ON lessons (learning_path_id);
-CREATE INDEX idx_lessons_book_id          ON lessons (book_id);
-CREATE INDEX idx_lessons_is_published     ON lessons (is_published);
-CREATE INDEX idx_lessons_sort_order       ON lessons (learning_path_id, sort_order);
-CREATE INDEX idx_lessons_xp_reward        ON lessons (xp_reward);
+CREATE INDEX IF NOT EXISTS idx_lessons_learning_path_id ON lessons (learning_path_id);
+CREATE INDEX IF NOT EXISTS idx_lessons_book_id          ON lessons (book_id);
+CREATE INDEX IF NOT EXISTS idx_lessons_is_published     ON lessons (is_published);
+CREATE INDEX IF NOT EXISTS idx_lessons_sort_order       ON lessons (learning_path_id, sort_order);
+CREATE INDEX IF NOT EXISTS idx_lessons_xp_reward        ON lessons (xp_reward);
 
 -- Full-text / trigram index on title for fuzzy search
-CREATE INDEX idx_lessons_title_trgm       ON lessons USING GIN (title gin_trgm_ops);
+CREATE INDEX IF NOT EXISTS idx_lessons_title_trgm       ON lessons USING GIN (title gin_trgm_ops);
 
 -- GIN index on key_concepts array for containment queries
-CREATE INDEX idx_lessons_key_concepts_gin ON lessons USING GIN (key_concepts);
+CREATE INDEX IF NOT EXISTS idx_lessons_key_concepts_gin ON lessons USING GIN (key_concepts);

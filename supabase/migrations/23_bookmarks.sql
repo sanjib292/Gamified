@@ -3,7 +3,7 @@
 -- User bookmarks for books and lessons
 -- =============================================================================
 
-CREATE TABLE IF NOT EXISTS bookmarks (
+CREATE TABLE IF NOT EXISTS IF NOT EXISTS bookmarks (
     id          UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id     UUID        NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
     target_type TEXT        NOT NULL CHECK (target_type IN ('book', 'lesson')),
@@ -18,15 +18,15 @@ CREATE TABLE IF NOT EXISTS bookmarks (
 );
 
 -- Primary query: all bookmarks for a user, newest first
-CREATE INDEX IF NOT EXISTS idx_bookmarks_user_created
+CREATE INDEX IF NOT EXISTS IF NOT EXISTS idx_bookmarks_user_created
     ON bookmarks (user_id, created_at DESC);
 
 -- Filter by content type within a user's bookmarks
-CREATE INDEX IF NOT EXISTS idx_bookmarks_user_type
+CREATE INDEX IF NOT EXISTS IF NOT EXISTS idx_bookmarks_user_type
     ON bookmarks (user_id, target_type, created_at DESC);
 
 -- Reverse lookup: which users bookmarked a given item
-CREATE INDEX IF NOT EXISTS idx_bookmarks_target
+CREATE INDEX IF NOT EXISTS IF NOT EXISTS idx_bookmarks_target
     ON bookmarks (target_type, target_id);
 
 COMMENT ON TABLE  bookmarks              IS 'User-saved bookmarks pointing to a book or lesson.';

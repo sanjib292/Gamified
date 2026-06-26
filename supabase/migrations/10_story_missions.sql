@@ -7,7 +7,7 @@
 -- Node shape: {"id":"n1","type":"dialogue|choice|outcome",
 --              "text":"...","choices":[{"label":"...","next_node_id":"n2"}]}
 
-CREATE TABLE story_missions (
+CREATE TABLE IF NOT EXISTS story_missions (
     id                  UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
     lesson_id           UUID        NOT NULL REFERENCES lessons(id) ON DELETE CASCADE,
     title               TEXT        NOT NULL,
@@ -28,6 +28,7 @@ CREATE TABLE story_missions (
     CONSTRAINT chk_story_missions_optimal_path    CHECK (optimal_path_length >= 0)
 );
 
+DROP TRIGGER IF EXISTS trg_story_missions_updated_at ON story_missions;
 CREATE TRIGGER trg_story_missions_updated_at
     BEFORE UPDATE ON story_missions
     FOR EACH ROW EXECUTE FUNCTION trigger_set_updated_at();
@@ -36,5 +37,5 @@ CREATE TRIGGER trg_story_missions_updated_at
 -- Indexes
 -- ============================================================
 
-CREATE INDEX idx_story_missions_lesson_id  ON story_missions (lesson_id);
-CREATE INDEX idx_story_missions_nodes_gin  ON story_missions USING GIN (nodes);
+CREATE INDEX IF NOT EXISTS idx_story_missions_lesson_id  ON story_missions (lesson_id);
+CREATE INDEX IF NOT EXISTS idx_story_missions_nodes_gin  ON story_missions USING GIN (nodes);

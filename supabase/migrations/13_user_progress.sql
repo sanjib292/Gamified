@@ -2,7 +2,7 @@
 -- MindQuest: User Progress
 -- ============================================================
 
-CREATE TABLE user_progress (
+CREATE TABLE IF NOT EXISTS user_progress (
     id                  UUID          PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id             UUID          NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
     lesson_id           UUID          NOT NULL REFERENCES lessons(id)  ON DELETE CASCADE,
@@ -33,6 +33,7 @@ CREATE TABLE user_progress (
     )
 );
 
+DROP TRIGGER IF EXISTS trg_user_progress_updated_at ON user_progress;
 CREATE TRIGGER trg_user_progress_updated_at
     BEFORE UPDATE ON user_progress
     FOR EACH ROW EXECUTE FUNCTION trigger_set_updated_at();
@@ -41,9 +42,9 @@ CREATE TRIGGER trg_user_progress_updated_at
 -- Indexes
 -- ============================================================
 
-CREATE INDEX idx_user_progress_user_id          ON user_progress (user_id);
-CREATE INDEX idx_user_progress_lesson_id        ON user_progress (lesson_id);
-CREATE INDEX idx_user_progress_status           ON user_progress (user_id, status);
-CREATE INDEX idx_user_progress_completed_at     ON user_progress (user_id, completed_at DESC) WHERE status = 'completed';
-CREATE INDEX idx_user_progress_last_attempted   ON user_progress (user_id, last_attempted_at DESC);
-CREATE INDEX idx_user_progress_srs_gin          ON user_progress USING GIN (srs_state);
+CREATE INDEX IF NOT EXISTS idx_user_progress_user_id          ON user_progress (user_id);
+CREATE INDEX IF NOT EXISTS idx_user_progress_lesson_id        ON user_progress (lesson_id);
+CREATE INDEX IF NOT EXISTS idx_user_progress_status           ON user_progress (user_id, status);
+CREATE INDEX IF NOT EXISTS idx_user_progress_completed_at     ON user_progress (user_id, completed_at DESC) WHERE status = 'completed';
+CREATE INDEX IF NOT EXISTS idx_user_progress_last_attempted   ON user_progress (user_id, last_attempted_at DESC);
+CREATE INDEX IF NOT EXISTS idx_user_progress_srs_gin          ON user_progress USING GIN (srs_state);

@@ -6,7 +6,7 @@
 -- They differ from achievements in that they are purely cosmetic
 -- and can be toggled on/off by the user.
 
-CREATE TABLE badges (
+CREATE TABLE IF NOT EXISTS badges (
     id          UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
     slug        TEXT        UNIQUE NOT NULL,
     title       TEXT        NOT NULL,
@@ -20,14 +20,14 @@ CREATE TABLE badges (
     CONSTRAINT chk_badges_tier CHECK (tier BETWEEN 1 AND 4)
 );
 
-CREATE INDEX idx_badges_slug ON badges (slug);
-CREATE INDEX idx_badges_tier ON badges (tier);
+CREATE INDEX IF NOT EXISTS idx_badges_slug ON badges (slug);
+CREATE INDEX IF NOT EXISTS idx_badges_tier ON badges (tier);
 
 -- ============================================================
 -- User Badges (join table)
 -- ============================================================
 
-CREATE TABLE user_badges (
+CREATE TABLE IF NOT EXISTS user_badges (
     id           UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id      UUID        NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
     badge_id     UUID        NOT NULL REFERENCES badges(id)   ON DELETE CASCADE,
@@ -37,10 +37,10 @@ CREATE TABLE user_badges (
     is_displayed BOOL        NOT NULL DEFAULT true
 );
 
-CREATE INDEX idx_user_badges_user_id    ON user_badges (user_id);
-CREATE INDEX idx_user_badges_badge_id   ON user_badges (badge_id);
-CREATE INDEX idx_user_badges_displayed  ON user_badges (user_id, is_displayed) WHERE is_displayed = true;
-CREATE INDEX idx_user_badges_earned_at  ON user_badges (user_id, earned_at DESC);
+CREATE INDEX IF NOT EXISTS idx_user_badges_user_id    ON user_badges (user_id);
+CREATE INDEX IF NOT EXISTS idx_user_badges_badge_id   ON user_badges (badge_id);
+CREATE INDEX IF NOT EXISTS idx_user_badges_displayed  ON user_badges (user_id, is_displayed) WHERE is_displayed = true;
+CREATE INDEX IF NOT EXISTS idx_user_badges_earned_at  ON user_badges (user_id, earned_at DESC);
 
 -- ============================================================
 -- Seed: starter badge set

@@ -2,7 +2,7 @@
 -- MindQuest: Books
 -- ============================================================
 
-CREATE TABLE books (
+CREATE TABLE IF NOT EXISTS books (
     id                  UUID             PRIMARY KEY DEFAULT gen_random_uuid(),
     title               TEXT             NOT NULL,
     subtitle            TEXT,
@@ -31,6 +31,7 @@ BEGIN
 END;
 $$;
 
+DROP TRIGGER IF EXISTS trg_books_updated_at ON books;
 CREATE TRIGGER trg_books_updated_at
     BEFORE UPDATE ON books
     FOR EACH ROW EXECUTE FUNCTION trigger_set_updated_at();
@@ -39,21 +40,21 @@ CREATE TRIGGER trg_books_updated_at
 -- book_categories junction table
 -- ============================================================
 
-CREATE TABLE book_categories (
+CREATE TABLE IF NOT EXISTS book_categories (
     book_id     UUID NOT NULL REFERENCES books(id)      ON DELETE CASCADE,
     category_id UUID NOT NULL REFERENCES categories(id) ON DELETE CASCADE,
     PRIMARY KEY (book_id, category_id)
 );
 
-CREATE INDEX idx_book_categories_category ON book_categories (category_id);
+CREATE INDEX IF NOT EXISTS idx_book_categories_category ON book_categories (category_id);
 
 -- ============================================================
 -- Indexes on books
 -- ============================================================
 
-CREATE INDEX idx_books_difficulty    ON books (difficulty);
-CREATE INDEX idx_books_is_published  ON books (is_published);
-CREATE INDEX idx_books_is_featured   ON books (is_featured);
-CREATE INDEX idx_books_tags_gin      ON books USING GIN (tags);
-CREATE INDEX idx_books_meta_gin      ON books USING GIN (meta);
-CREATE INDEX idx_books_published_at  ON books (published_at DESC) WHERE is_published = true;
+CREATE INDEX IF NOT EXISTS idx_books_difficulty    ON books (difficulty);
+CREATE INDEX IF NOT EXISTS idx_books_is_published  ON books (is_published);
+CREATE INDEX IF NOT EXISTS idx_books_is_featured   ON books (is_featured);
+CREATE INDEX IF NOT EXISTS idx_books_tags_gin      ON books USING GIN (tags);
+CREATE INDEX IF NOT EXISTS idx_books_meta_gin      ON books USING GIN (meta);
+CREATE INDEX IF NOT EXISTS idx_books_published_at  ON books (published_at DESC) WHERE is_published = true;

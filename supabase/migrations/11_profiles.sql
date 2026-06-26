@@ -5,7 +5,7 @@
 -- Mirrors auth.users 1-to-1. Row is created via trigger or
 -- application code immediately after a user signs up.
 
-CREATE TABLE profiles (
+CREATE TABLE IF NOT EXISTS profiles (
     id                          UUID        PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
     email                       TEXT        UNIQUE NOT NULL,
     display_name                TEXT,
@@ -33,6 +33,7 @@ CREATE TABLE profiles (
     CONSTRAINT chk_profiles_daily_goal_minutes CHECK (daily_goal_minutes > 0)
 );
 
+DROP TRIGGER IF EXISTS trg_profiles_updated_at ON profiles;
 CREATE TRIGGER trg_profiles_updated_at
     BEFORE UPDATE ON profiles
     FOR EACH ROW EXECUTE FUNCTION trigger_set_updated_at();
@@ -51,6 +52,7 @@ BEGIN
 END;
 $$;
 
+DROP TRIGGER IF EXISTS trg_on_auth_user_created ON auth.users;
 CREATE TRIGGER trg_on_auth_user_created
     AFTER INSERT ON auth.users
     FOR EACH ROW EXECUTE FUNCTION handle_new_user();
@@ -59,6 +61,6 @@ CREATE TRIGGER trg_on_auth_user_created
 -- Indexes
 -- ============================================================
 
-CREATE INDEX idx_profiles_xp_total   ON profiles (xp_total DESC);
-CREATE INDEX idx_profiles_level      ON profiles (level);
-CREATE INDEX idx_profiles_created_at ON profiles (created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_profiles_xp_total   ON profiles (xp_total DESC);
+CREATE INDEX IF NOT EXISTS idx_profiles_level      ON profiles (level);
+CREATE INDEX IF NOT EXISTS idx_profiles_created_at ON profiles (created_at DESC);

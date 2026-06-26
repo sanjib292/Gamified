@@ -2,7 +2,7 @@
 -- MindQuest: Achievements & User Achievements
 -- ============================================================
 
-CREATE TABLE achievements (
+CREATE TABLE IF NOT EXISTS achievements (
     id               UUID                  PRIMARY KEY DEFAULT gen_random_uuid(),
     slug             TEXT                  UNIQUE NOT NULL,
     title            TEXT                  NOT NULL,
@@ -25,16 +25,16 @@ CREATE TABLE achievements (
     CONSTRAINT chk_achievements_condition_not_empty CHECK (condition_value <> '{}'::jsonb)
 );
 
-CREATE INDEX idx_achievements_slug     ON achievements (slug);
-CREATE INDEX idx_achievements_category ON achievements (category);
-CREATE INDEX idx_achievements_sort     ON achievements (sort_order);
-CREATE INDEX idx_achievements_cond_gin ON achievements USING GIN (condition_value);
+CREATE INDEX IF NOT EXISTS idx_achievements_slug     ON achievements (slug);
+CREATE INDEX IF NOT EXISTS idx_achievements_category ON achievements (category);
+CREATE INDEX IF NOT EXISTS idx_achievements_sort     ON achievements (sort_order);
+CREATE INDEX IF NOT EXISTS idx_achievements_cond_gin ON achievements USING GIN (condition_value);
 
 -- ============================================================
 -- User Achievements (join table)
 -- ============================================================
 
-CREATE TABLE user_achievements (
+CREATE TABLE IF NOT EXISTS user_achievements (
     id             UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id        UUID        NOT NULL REFERENCES profiles(id)     ON DELETE CASCADE,
     achievement_id UUID        NOT NULL REFERENCES achievements(id) ON DELETE CASCADE,
@@ -42,9 +42,9 @@ CREATE TABLE user_achievements (
     earned_at      TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
-CREATE INDEX idx_user_achievements_user_id        ON user_achievements (user_id);
-CREATE INDEX idx_user_achievements_achievement_id ON user_achievements (achievement_id);
-CREATE INDEX idx_user_achievements_earned_at      ON user_achievements (user_id, earned_at DESC);
+CREATE INDEX IF NOT EXISTS idx_user_achievements_user_id        ON user_achievements (user_id);
+CREATE INDEX IF NOT EXISTS idx_user_achievements_achievement_id ON user_achievements (achievement_id);
+CREATE INDEX IF NOT EXISTS idx_user_achievements_earned_at      ON user_achievements (user_id, earned_at DESC);
 
 -- ============================================================
 -- Seed: common achievements

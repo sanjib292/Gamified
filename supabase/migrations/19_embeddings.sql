@@ -4,7 +4,7 @@
 -- Requires: pgvector extension (01_extensions_and_enums.sql)
 -- =============================================================================
 
-CREATE TABLE IF NOT EXISTS embeddings (
+CREATE TABLE IF NOT EXISTS IF NOT EXISTS embeddings (
     id              UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
     source_type     TEXT        NOT NULL CHECK (source_type IN ('book', 'lesson', 'lesson_content')),
     source_id       UUID        NOT NULL,
@@ -22,26 +22,26 @@ CREATE TABLE IF NOT EXISTS embeddings (
 );
 
 -- Index to look up embedding by source
-CREATE INDEX IF NOT EXISTS idx_embeddings_source
+CREATE INDEX IF NOT EXISTS IF NOT EXISTS idx_embeddings_source
     ON embeddings (source_type, source_id);
 
 -- Partial indexes per source_type to speed up type-scoped semantic queries
-CREATE INDEX IF NOT EXISTS idx_embeddings_source_type_book
+CREATE INDEX IF NOT EXISTS IF NOT EXISTS idx_embeddings_source_type_book
     ON embeddings (source_id)
     WHERE source_type = 'book';
 
-CREATE INDEX IF NOT EXISTS idx_embeddings_source_type_lesson
+CREATE INDEX IF NOT EXISTS IF NOT EXISTS idx_embeddings_source_type_lesson
     ON embeddings (source_id)
     WHERE source_type = 'lesson';
 
-CREATE INDEX IF NOT EXISTS idx_embeddings_source_type_lesson_content
+CREATE INDEX IF NOT EXISTS IF NOT EXISTS idx_embeddings_source_type_lesson_content
     ON embeddings (source_id)
     WHERE source_type = 'lesson_content';
 
 -- IVFFlat approximate nearest-neighbour index for cosine similarity search.
 -- lists=100 suitable for up to ~1 million rows; scale to lists=200+ beyond that.
 -- Rebuild index periodically after large batch ingestion for best recall.
-CREATE INDEX IF NOT EXISTS idx_embeddings_embedding_ivfflat
+CREATE INDEX IF NOT EXISTS IF NOT EXISTS idx_embeddings_embedding_ivfflat
     ON embeddings
     USING ivfflat (embedding vector_cosine_ops)
     WITH (lists = 100);

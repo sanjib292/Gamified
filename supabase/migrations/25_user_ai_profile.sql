@@ -3,7 +3,7 @@
 -- Per-user AI personalisation profile (1:1 with profiles)
 -- =============================================================================
 
-CREATE TABLE IF NOT EXISTS user_ai_profile (
+CREATE TABLE IF NOT EXISTS IF NOT EXISTS user_ai_profile (
     user_id                 UUID        PRIMARY KEY REFERENCES profiles(id) ON DELETE CASCADE,
     learning_style          TEXT        NOT NULL DEFAULT 'balanced'
                                         CHECK (learning_style IN (

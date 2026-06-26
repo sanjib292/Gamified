@@ -3,7 +3,7 @@
 -- Rolling daily / weekly learning statistics per user (reset by cron)
 -- =============================================================================
 
-CREATE TABLE IF NOT EXISTS user_learning_stats (
+CREATE TABLE IF NOT EXISTS IF NOT EXISTS user_learning_stats (
     user_id                 UUID        PRIMARY KEY REFERENCES profiles(id) ON DELETE CASCADE,
     lessons_today           SMALLINT    NOT NULL DEFAULT 0,
     lessons_this_week       SMALLINT    NOT NULL DEFAULT 0,

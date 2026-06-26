@@ -2,7 +2,7 @@
 -- MindQuest: Quizzes & Quiz Questions
 -- ============================================================
 
-CREATE TABLE quizzes (
+CREATE TABLE IF NOT EXISTS quizzes (
     id                  UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
     lesson_id           UUID        NOT NULL REFERENCES lessons(id) ON DELETE CASCADE,
     title               TEXT        NOT NULL,
@@ -18,17 +18,18 @@ CREATE TABLE quizzes (
     CONSTRAINT chk_quizzes_perfect_ge_base CHECK (xp_perfect_reward >= xp_reward)
 );
 
+DROP TRIGGER IF EXISTS trg_quizzes_updated_at ON quizzes;
 CREATE TRIGGER trg_quizzes_updated_at
     BEFORE UPDATE ON quizzes
     FOR EACH ROW EXECUTE FUNCTION trigger_set_updated_at();
 
-CREATE INDEX idx_quizzes_lesson_id ON quizzes (lesson_id);
+CREATE INDEX IF NOT EXISTS idx_quizzes_lesson_id ON quizzes (lesson_id);
 
 -- ============================================================
 -- Quiz Questions
 -- ============================================================
 
-CREATE TABLE quiz_questions (
+CREATE TABLE IF NOT EXISTS quiz_questions (
     id                  UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
     quiz_id             UUID        NOT NULL REFERENCES quizzes(id) ON DELETE CASCADE,
     question_text       TEXT        NOT NULL,
@@ -50,5 +51,5 @@ CREATE TABLE quiz_questions (
     )
 );
 
-CREATE INDEX idx_quiz_questions_quiz_id    ON quiz_questions (quiz_id);
-CREATE INDEX idx_quiz_questions_sort_order ON quiz_questions (quiz_id, sort_order);
+CREATE INDEX IF NOT EXISTS idx_quiz_questions_quiz_id    ON quiz_questions (quiz_id);
+CREATE INDEX IF NOT EXISTS idx_quiz_questions_sort_order ON quiz_questions (quiz_id, sort_order);

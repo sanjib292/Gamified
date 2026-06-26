@@ -3,7 +3,7 @@
 -- User learning streaks tracking
 -- =============================================================================
 
-CREATE TABLE IF NOT EXISTS streaks (
+CREATE TABLE IF NOT EXISTS IF NOT EXISTS streaks (
     id                  UUID            PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id             UUID            NOT NULL UNIQUE REFERENCES profiles(id) ON DELETE CASCADE,
     current_streak      INT             NOT NULL DEFAULT 0,
@@ -26,11 +26,11 @@ CREATE TABLE IF NOT EXISTS streaks (
 );
 
 -- Index for user lookup (covered by UNIQUE, kept explicit for clarity)
-CREATE INDEX IF NOT EXISTS idx_streaks_user_id
+CREATE INDEX IF NOT EXISTS IF NOT EXISTS idx_streaks_user_id
     ON streaks (user_id);
 
 -- Index to support queries filtering/sorting by last activity date
-CREATE INDEX IF NOT EXISTS idx_streaks_last_activity_date
+CREATE INDEX IF NOT EXISTS IF NOT EXISTS idx_streaks_last_activity_date
     ON streaks (last_activity_date);
 
 COMMENT ON TABLE  streaks                       IS 'Tracks daily learning streak state per user.';

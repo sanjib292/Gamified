@@ -7,7 +7,7 @@
 -- front-end can render any decision-tree or step-by-step scenario
 -- without schema changes.
 
-CREATE TABLE simulations (
+CREATE TABLE IF NOT EXISTS simulations (
     id              UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
     lesson_id       UUID        NOT NULL REFERENCES lessons(id) ON DELETE CASCADE,
     title           TEXT        NOT NULL,
@@ -29,6 +29,7 @@ CREATE TABLE simulations (
     CONSTRAINT chk_simulations_initial_state_not_empty CHECK (initial_state <> '{}'::jsonb)
 );
 
+DROP TRIGGER IF EXISTS trg_simulations_updated_at ON simulations;
 CREATE TRIGGER trg_simulations_updated_at
     BEFORE UPDATE ON simulations
     FOR EACH ROW EXECUTE FUNCTION trigger_set_updated_at();
@@ -37,6 +38,6 @@ CREATE TRIGGER trg_simulations_updated_at
 -- Indexes
 -- ============================================================
 
-CREATE INDEX idx_simulations_lesson_id      ON simulations (lesson_id);
-CREATE INDEX idx_simulations_steps_gin      ON simulations USING GIN (steps);
-CREATE INDEX idx_simulations_win_cond_gin   ON simulations USING GIN (win_condition);
+CREATE INDEX IF NOT EXISTS idx_simulations_lesson_id      ON simulations (lesson_id);
+CREATE INDEX IF NOT EXISTS idx_simulations_steps_gin      ON simulations USING GIN (steps);
+CREATE INDEX IF NOT EXISTS idx_simulations_win_cond_gin   ON simulations USING GIN (win_condition);

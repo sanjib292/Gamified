@@ -4,7 +4,7 @@
 -- Requires: notification_type enum (01_extensions_and_enums.sql)
 -- =============================================================================
 
-CREATE TABLE IF NOT EXISTS notifications (
+CREATE TABLE IF NOT EXISTS IF NOT EXISTS notifications (
     id          UUID                PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id     UUID                NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
     type        notification_type   NOT NULL,
@@ -26,20 +26,20 @@ CREATE TABLE IF NOT EXISTS notifications (
 );
 
 -- Primary inbox query: unread notifications for a user, newest first
-CREATE INDEX IF NOT EXISTS idx_notifications_user_unread
+CREATE INDEX IF NOT EXISTS IF NOT EXISTS idx_notifications_user_unread
     ON notifications (user_id, created_at DESC)
     WHERE is_read = false;
 
 -- Full inbox (read + unread), newest first
-CREATE INDEX IF NOT EXISTS idx_notifications_user_created
+CREATE INDEX IF NOT EXISTS IF NOT EXISTS idx_notifications_user_created
     ON notifications (user_id, created_at DESC);
 
 -- Filter by type within a user's inbox
-CREATE INDEX IF NOT EXISTS idx_notifications_user_type
+CREATE INDEX IF NOT EXISTS IF NOT EXISTS idx_notifications_user_type
     ON notifications (user_id, type, created_at DESC);
 
 -- Support bulk mark-read queries on the is_read flag
-CREATE INDEX IF NOT EXISTS idx_notifications_is_read
+CREATE INDEX IF NOT EXISTS IF NOT EXISTS idx_notifications_is_read
     ON notifications (is_read)
     WHERE is_read = false;
 

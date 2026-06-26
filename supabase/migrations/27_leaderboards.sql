@@ -4,7 +4,7 @@
 -- Requires: period_type enum (01_extensions_and_enums.sql)
 -- =============================================================================
 
-CREATE TABLE IF NOT EXISTS leaderboards (
+CREATE TABLE IF NOT EXISTS IF NOT EXISTS leaderboards (
     id              UUID            PRIMARY KEY DEFAULT gen_random_uuid(),
     period_type     period_type     NOT NULL,
     -- Human-readable period key:
@@ -29,11 +29,11 @@ CREATE TABLE IF NOT EXISTS leaderboards (
 );
 
 -- Primary leaderboard read query: ranked list for a given period
-CREATE INDEX IF NOT EXISTS idx_leaderboards_period_rank
+CREATE INDEX IF NOT EXISTS IF NOT EXISTS idx_leaderboards_period_rank
     ON leaderboards (period_type, period_key, rank ASC NULLS LAST);
 
 -- Per-user history: "what was my rank in past periods?"
-CREATE INDEX IF NOT EXISTS idx_leaderboards_user_period
+CREATE INDEX IF NOT EXISTS IF NOT EXISTS idx_leaderboards_user_period
     ON leaderboards (user_id, period_type, snapshot_at DESC);
 
 COMMENT ON TABLE  leaderboards              IS 'Point-in-time leaderboard snapshots computed by refresh_leaderboard_snapshot().';
