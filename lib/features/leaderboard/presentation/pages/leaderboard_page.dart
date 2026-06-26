@@ -184,7 +184,7 @@ class _LeaderboardBody extends StatelessWidget {
 
             // Rank list (4+)
             SliverPadding(
-              padding: const EdgeInsets.fromLTRB(
+              padding: EdgeInsets.fromLTRB(
                   AppSpacing.md, AppSpacing.md, AppSpacing.md,
                   // Extra bottom padding when sticky bar is shown.
                   userInTop10 ? AppSpacing.md : 80),
