@@ -32,4 +32,5 @@ INSERT INTO categories (name, slug, description, color_hex, sort_order) VALUES
     ('Philosophy',       'philosophy',         'Examine ideas, ethics, logic, and life''s big questions.',          '#2C3E50',  7),
     ('Health',           'health',             'Physical and mental well-being, nutrition, and longevity.',         '#E74C3C',  8),
     ('Technology',       'technology',         'Software, AI, hardware trends, and the digital future.',           '#2ECC71',  9),
-    ('Creativity',       'creativity',         'Unlock creative thinking, design, and artistic expression.',       '#F39C12', 10);
+    ('Creativity',       'creativity',         'Unlock creative thinking, design, and artistic expression.',       '#F39C12', 10)
+ON CONFLICT (slug) DO NOTHING;

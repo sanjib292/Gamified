@@ -56,4 +56,5 @@ INSERT INTO badges (slug, title, description, color_hex, tier) VALUES
     ('speed_learner',       'Speed Learner',        'Completed a lesson in record time.',                     '#16A085', 2),
     ('night_owl',           'Night Owl',            'Studied after midnight.',                                 '#2C3E50', 1),
     ('social_butterfly',    'Social Butterfly',     'Shared progress with friends 5 times.',                  '#E74C3C', 2),
-    ('legend',              'MindQuest Legend',     'Reached the highest level on the platform.',             '#FFD700', 4);
+    ('legend',              'MindQuest Legend',     'Reached the highest level on the platform.',             '#FFD700', 4)
+ON CONFLICT (slug) DO NOTHING;

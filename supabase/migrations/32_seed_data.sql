@@ -171,179 +171,43 @@ ON CONFLICT (id) DO NOTHING;
 -- 5. Achievements (15 total)
 -- ---------------------------------------------------------------------------
 INSERT INTO achievements (
-    id, title, description, icon_url,
-    condition_type, condition_value,
-    xp_reward, is_active
+    id, slug, title, description, icon_name, category,
+    condition_type, condition_value, xp_reward, sort_order
 )
 VALUES
     -- Lesson milestones
-    (
-        'ac100000-0000-0000-0000-000000000001',
-        'First Step',
-        'Complete your very first lesson.',
-        'https://placeholder.mindquest.app/achievements/first-step.svg',
-        'lessons_completed', 1, 25, true
-    ),
-    (
-        'ac100000-0000-0000-0000-000000000002',
-        'On a Roll',
-        'Complete 5 lessons.',
-        'https://placeholder.mindquest.app/achievements/on-a-roll.svg',
-        'lessons_completed', 5, 50, true
-    ),
-    (
-        'ac100000-0000-0000-0000-000000000003',
-        'Double Digits',
-        'Complete 10 lessons.',
-        'https://placeholder.mindquest.app/achievements/double-digits.svg',
-        'lessons_completed', 10, 100, true
-    ),
+    ('ac100000-0000-0000-0000-000000000001', 'first_step',       'First Step',       'Complete your very first lesson.',            'star',           'learning', 'lessons_completed', '{"count": 1}',   25,  1),
+    ('ac100000-0000-0000-0000-000000000002', 'on_a_roll',        'On a Roll',        'Complete 5 lessons.',                         'bolt',           'learning', 'lessons_completed', '{"count": 5}',   50,  2),
+    ('ac100000-0000-0000-0000-000000000003', 'double_digits',    'Double Digits',    'Complete 10 lessons.',                        'local_fire_department', 'learning', 'lessons_completed', '{"count": 10}',  100, 3),
     -- Streak milestones
-    (
-        'ac100000-0000-0000-0000-000000000004',
-        'Hat-trick',
-        'Maintain a 3-day learning streak.',
-        'https://placeholder.mindquest.app/achievements/hat-trick.svg',
-        'lesson_streak', 3, 30, true
-    ),
-    (
-        'ac100000-0000-0000-0000-000000000005',
-        'Week Warrior',
-        'Maintain a 7-day learning streak.',
-        'https://placeholder.mindquest.app/achievements/week-warrior.svg',
-        'lesson_streak', 7, 75, true
-    ),
-    (
-        'ac100000-0000-0000-0000-000000000006',
-        'Monthly Devotion',
-        'Maintain a 30-day learning streak.',
-        'https://placeholder.mindquest.app/achievements/monthly-devotion.svg',
-        'lesson_streak', 30, 300, true
-    ),
+    ('ac100000-0000-0000-0000-000000000004', 'hat_trick',        'Hat-trick',        'Maintain a 3-day learning streak.',           'whatshot',       'streak',   'streak_days',       '{"days": 3}',    30,  4),
+    ('ac100000-0000-0000-0000-000000000005', 'week_warrior',     'Week Warrior',     'Maintain a 7-day learning streak.',           'emoji_events',   'streak',   'streak_days',       '{"days": 7}',    75,  5),
+    ('ac100000-0000-0000-0000-000000000006', 'monthly_devotion', 'Monthly Devotion', 'Maintain a 30-day learning streak.',          'military_tech',  'streak',   'streak_days',       '{"days": 30}',   300, 6),
     -- Quiz achievements
-    (
-        'ac100000-0000-0000-0000-000000000007',
-        'Quiz Ace',
-        'Score 100% on your first quiz.',
-        'https://placeholder.mindquest.app/achievements/quiz-ace.svg',
-        'quiz_perfect_count', 1, 50, true
-    ),
-    (
-        'ac100000-0000-0000-0000-000000000008',
-        'Quiz Master',
-        'Score 100% on 10 quizzes.',
-        'https://placeholder.mindquest.app/achievements/quiz-master.svg',
-        'quiz_perfect_count', 10, 200, true
-    ),
+    ('ac100000-0000-0000-0000-000000000007', 'quiz_ace',         'Quiz Ace',         'Score 100% on your first quiz.',              'grade',          'mastery',  'quiz_perfect_count','{"count": 1}',   50,  7),
+    ('ac100000-0000-0000-0000-000000000008', 'quiz_master',      'Quiz Master',      'Score 100% on 10 quizzes.',                   'workspace_premium', 'mastery', 'quiz_perfect_count','{"count": 10}',  200, 8),
     -- Book completions
-    (
-        'ac100000-0000-0000-0000-000000000009',
-        'Bookworm',
-        'Complete your first book.',
-        'https://placeholder.mindquest.app/achievements/bookworm.svg',
-        'books_completed', 1, 150, true
-    ),
+    ('ac100000-0000-0000-0000-000000000009', 'bookworm',         'Bookworm',         'Complete your first book.',                   'menu_book',      'mastery',  'books_completed',   '{"count": 1}',   150, 9),
     -- Level milestones
-    (
-        'ac100000-0000-0000-0000-000000000010',
-        'Rising Scholar',
-        'Reach Level 5.',
-        'https://placeholder.mindquest.app/achievements/rising-scholar.svg',
-        'level', 5, 100, true
-    ),
-    (
-        'ac100000-0000-0000-0000-000000000011',
-        'Knowledge Seeker',
-        'Reach Level 10.',
-        'https://placeholder.mindquest.app/achievements/knowledge-seeker.svg',
-        'level', 10, 200, true
-    ),
-    (
-        'ac100000-0000-0000-0000-000000000012',
-        'Sage',
-        'Reach Level 25.',
-        'https://placeholder.mindquest.app/achievements/sage.svg',
-        'level', 25, 500, true
-    ),
+    ('ac100000-0000-0000-0000-000000000010', 'rising_scholar',   'Rising Scholar',   'Reach Level 5.',                              'school',         'learning', 'level',             '{"level": 5}',   100, 10),
+    ('ac100000-0000-0000-0000-000000000011', 'knowledge_seeker', 'Knowledge Seeker', 'Reach Level 10.',                             'psychology',     'learning', 'level',             '{"level": 10}',  200, 11),
+    ('ac100000-0000-0000-0000-000000000012', 'sage',             'Sage',             'Reach Level 25.',                             'auto_awesome',   'mastery',  'level',             '{"level": 25}',  500, 12),
     -- Behavioural / time-of-day achievements
-    -- These use custom condition_types resolved in application code
-    -- (check_and_award_achievements handles only numeric comparisons;
-    --  early_bird / night_owl / weekend_warrior are evaluated server-side
-    --  at lesson completion time before calling the function)
-    (
-        'ac100000-0000-0000-0000-000000000013',
-        'Early Bird',
-        'Complete a lesson before 8 AM.',
-        'https://placeholder.mindquest.app/achievements/early-bird.svg',
-        'early_bird', 1, 40, true
-    ),
-    (
-        'ac100000-0000-0000-0000-000000000014',
-        'Night Owl',
-        'Complete a lesson after 9 PM.',
-        'https://placeholder.mindquest.app/achievements/night-owl.svg',
-        'night_owl', 1, 40, true
-    ),
-    (
-        'ac100000-0000-0000-0000-000000000015',
-        'Weekend Warrior',
-        'Complete a lesson on a Saturday or Sunday.',
-        'https://placeholder.mindquest.app/achievements/weekend-warrior.svg',
-        'weekend_warrior', 1, 40, true
-    )
+    ('ac100000-0000-0000-0000-000000000013', 'early_bird',       'Early Bird',       'Complete a lesson before 8 AM.',              'wb_sunny',       'learning', 'early_bird',        '{"count": 1}',   40,  13),
+    ('ac100000-0000-0000-0000-000000000014', 'night_owl',        'Night Owl',        'Complete a lesson after 9 PM.',               'nightlight',     'learning', 'night_owl',         '{"count": 1}',   40,  14),
+    ('ac100000-0000-0000-0000-000000000015', 'weekend_warrior',  'Weekend Warrior',  'Complete a lesson on a Saturday or Sunday.',  'weekend',        'learning', 'weekend_warrior',   '{"count": 1}',   40,  15)
 ON CONFLICT (id) DO NOTHING;
 
 -- ---------------------------------------------------------------------------
 -- 6. Badges (5 total)
 -- ---------------------------------------------------------------------------
 INSERT INTO badges (
-    id, title, description, icon_url,
-    tier, xp_threshold, is_active
+    id, slug, title, description, icon_url, color_hex, tier
 )
 VALUES
-    (
-        'ba100000-0000-0000-0000-000000000001',
-        'Rookie Reader',
-        'Awarded to learners who complete their first lesson. Every great journey starts with a single page.',
-        'https://placeholder.mindquest.app/badges/rookie-reader.svg',
-        'bronze',
-        0,
-        true
-    ),
-    (
-        'ba100000-0000-0000-0000-000000000002',
-        'Quiz Champion',
-        'Awarded to learners who score 100% on 5 or more quizzes. Precision is a skill, not luck.',
-        'https://placeholder.mindquest.app/badges/quiz-champion.svg',
-        'silver',
-        500,
-        true
-    ),
-    (
-        'ba100000-0000-0000-0000-000000000003',
-        'Streak Warrior',
-        'Awarded for maintaining a 14-day learning streak. Consistency compounds.',
-        'https://placeholder.mindquest.app/badges/streak-warrior.svg',
-        'silver',
-        750,
-        true
-    ),
-    (
-        'ba100000-0000-0000-0000-000000000004',
-        'Book Sage',
-        'Awarded for completing 3 full books on MindQuest. Depth of knowledge defines wisdom.',
-        'https://placeholder.mindquest.app/badges/book-sage.svg',
-        'gold',
-        2000,
-        true
-    ),
-    (
-        'ba100000-0000-0000-0000-000000000005',
-        'AI Explorer',
-        'Awarded for having 10 or more AI tutor conversations. Curiosity is the engine of learning.',
-        'https://placeholder.mindquest.app/badges/ai-explorer.svg',
-        'gold',
-        1500,
-        true
-    )
+    ('ba100000-0000-0000-0000-000000000001', 'rookie_reader',   'Rookie Reader',   'Awarded to learners who complete their first lesson. Every great journey starts with a single page.', 'https://placeholder.mindquest.app/badges/rookie-reader.svg',   '#27AE60', 1),
+    ('ba100000-0000-0000-0000-000000000002', 'quiz_champion',   'Quiz Champion',   'Awarded to learners who score 100% on 5 or more quizzes. Precision is a skill, not luck.',           'https://placeholder.mindquest.app/badges/quiz-champion.svg',   '#2980B9', 2),
+    ('ba100000-0000-0000-0000-000000000003', 'streak_warrior',  'Streak Warrior',  'Awarded for maintaining a 14-day learning streak. Consistency compounds.',                           'https://placeholder.mindquest.app/badges/streak-warrior.svg',  '#E67E22', 2),
+    ('ba100000-0000-0000-0000-000000000004', 'book_sage',       'Book Sage',       'Awarded for completing 3 full books on MindQuest. Depth of knowledge defines wisdom.',               'https://placeholder.mindquest.app/badges/book-sage.svg',       '#8E44AD', 3),
+    ('ba100000-0000-0000-0000-000000000005', 'ai_explorer',     'AI Explorer',     'Awarded for having 10 or more AI tutor conversations. Curiosity is the engine of learning.',         'https://placeholder.mindquest.app/badges/ai-explorer.svg',     '#F39C12', 3)
 ON CONFLICT (id) DO NOTHING;

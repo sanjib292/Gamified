@@ -8,8 +8,8 @@ CREATE TABLE IF NOT EXISTS achievements (
     title            TEXT                  NOT NULL,
     description      TEXT                  NOT NULL,
     category         achievement_category  NOT NULL DEFAULT 'learning',
-    icon_url         TEXT,
-    badge_color      TEXT                  NOT NULL DEFAULT '#6C5CE7',
+    icon_name        TEXT,
+    color_hex        TEXT                  NOT NULL DEFAULT '#6C5CE7',
     xp_reward        SMALLINT              NOT NULL DEFAULT 50,
     -- Type of condition to evaluate, e.g. 'lessons_completed', 'streak_days',
     -- 'books_completed', 'xp_total', 'quiz_perfect_count', 'social_shares'
@@ -50,7 +50,7 @@ CREATE INDEX IF NOT EXISTS idx_user_achievements_earned_at      ON user_achievem
 -- Seed: common achievements
 -- ============================================================
 
-INSERT INTO achievements (slug, title, description, category, badge_color, xp_reward, condition_type, condition_value, sort_order) VALUES
+INSERT INTO achievements (slug, title, description, category, color_hex, xp_reward, condition_type, condition_value, sort_order) VALUES
     ('first_lesson',       'First Step',          'Complete your very first lesson.',               'learning',    '#27AE60',  50,  'lessons_completed',  '{"count": 1}',    1),
     ('ten_lessons',        'On A Roll',           'Complete 10 lessons.',                           'learning',    '#2980B9',  100, 'lessons_completed',  '{"count": 10}',   2),
     ('fifty_lessons',      'Knowledge Seeker',    'Complete 50 lessons.',                           'learning',    '#8E44AD',  250, 'lessons_completed',  '{"count": 50}',   3),
@@ -60,4 +60,5 @@ INSERT INTO achievements (slug, title, description, category, badge_color, xp_re
     ('streak_30',          'Month Master',        'Maintain a 30-day learning streak.',            'streak',      '#E74C3C',  300, 'streak_days',         '{"days": 30}',    7),
     ('perfect_quiz',       'Perfectionist',       'Score 100% on any quiz.',                       'mastery',     '#16A085',   75, 'quiz_perfect_count', '{"count": 1}',    8),
     ('ten_perfect_quizzes','Quiz Champion',       'Score 100% on 10 different quizzes.',           'mastery',     '#6C5CE7',  200, 'quiz_perfect_count', '{"count": 10}',   9),
-    ('xp_1000',            'XP Hunter',           'Earn a total of 1,000 XP.',                     'learning',    '#2ECC71',   50, 'xp_total',           '{"amount": 1000}',10);
+    ('xp_1000',            'XP Hunter',           'Earn a total of 1,000 XP.',                     'learning',    '#2ECC71',   50, 'xp_total',           '{"amount": 1000}',10)
+ON CONFLICT (slug) DO NOTHING;
