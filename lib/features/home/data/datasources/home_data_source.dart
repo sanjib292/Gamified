@@ -3,51 +3,52 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../shared/widgets/cards/book_card.dart';
 import '../models/featured_content.dart';
 
-/// Data source for home-screen content.
-///
-/// Maps raw Supabase JSON into lightweight domain objects.
 class HomeDataSource {
   const HomeDataSource(this._supabase);
 
   final SupabaseClient _supabase;
 
-  // ---------------------------------------------------------------------------
-  // Public API
-  // ---------------------------------------------------------------------------
-
-  /// Fetches everything needed to render the home screen in a single batch.
   Future<FeaturedContent> fetchFeaturedContent() async {
-    // Fetch featured book (marked is_featured = true, limit 1)
     final featuredRows = await _supabase
         .from('books')
-        .select('id, title, author, cover_url, difficulty, is_featured')
+        .select('id, title, author, cover_url, difficulty')
         .eq('is_featured', true)
+        .eq('is_published', true)
         .limit(1);
 
     final featuredBook = featuredRows.isNotEmpty
         ? _rowToBook(featuredRows.first)
         : _placeholderBook();
 
-    // Fetch categories
     final categoryRows = await _supabase
         .from('categories')
         .select('id, name')
-        .order('display_order', ascending: true);
+        .order('sort_order', ascending: true);
 
-    // Fetch books grouped by category (join)
     final bookRows = await _supabase
         .from('books')
-        .select('id, title, author, cover_url, difficulty, category_id')
+        .select('id, title, author, cover_url, difficulty')
         .eq('is_published', true)
         .order('created_at', ascending: false)
         .limit(50);
 
-    // Group books by category
+    // Build id → Book map for O(1) lookup
+    final bookMap = {
+      for (final r in bookRows) r['id'] as String: _rowToBook(r),
+    };
+
+    // Fetch book→category associations
+    final bookCatRows = await _supabase
+        .from('book_categories')
+        .select('book_id, category_id');
+
     final booksByCategory = <String, List<Book>>{};
-    for (final row in bookRows) {
-      final catId = row['category_id'] as String?;
-      if (catId == null) continue;
-      booksByCategory.putIfAbsent(catId, () => []).add(_rowToBook(row));
+    for (final bc in bookCatRows) {
+      final catId = bc['category_id'] as String;
+      final book = bookMap[bc['book_id'] as String];
+      if (book != null) {
+        booksByCategory.putIfAbsent(catId, () => []).add(book);
+      }
     }
 
     final categories = categoryRows
@@ -62,11 +63,7 @@ class HomeDataSource {
         .where((c) => c.books.isNotEmpty)
         .toList();
 
-    // New books — most recently added across all categories
-    final newBooks = bookRows
-        .take(10)
-        .map<Book>(_rowToBook)
-        .toList();
+    final newBooks = bookRows.take(10).map<Book>(_rowToBook).toList();
 
     return FeaturedContent(
       featuredBook: featuredBook,
@@ -76,29 +73,26 @@ class HomeDataSource {
     );
   }
 
-  /// Fetches books the user has started but not completed, sorted by the most
-  /// recently accessed lesson.
   Future<List<Book>> fetchContinueReading(String userId) async {
     final rows = await _supabase
         .from('user_progress')
         .select(
-          'book_id, last_accessed_at, books(id, title, author, cover_url, difficulty)',
-        )
+            'lessons(book_id, books(id, title, author, cover_url, difficulty))')
         .eq('user_id', userId)
-        .gt('progress_percent', 0)
-        .lt('progress_percent', 100)
-        .order('last_accessed_at', ascending: false)
+        .inFilter('status', ['not_started', 'in_progress'])
+        .order('last_attempted_at', ascending: false)
         .limit(10);
 
-    return rows.map<Book>((row) {
-      final bookMap = row['books'] as Map<String, dynamic>;
-      return _rowToBook(bookMap);
+    final seenIds = <String>{};
+    return rows.expand<Book>((row) {
+      final lessonRow = row['lessons'] as Map<String, dynamic>?;
+      final bookRow = lessonRow?['books'] as Map<String, dynamic>?;
+      if (bookRow == null) return const [];
+      final id = bookRow['id'] as String;
+      if (!seenIds.add(id)) return const [];
+      return [_rowToBook(bookRow)];
     }).toList();
   }
-
-  // ---------------------------------------------------------------------------
-  // Helpers
-  // ---------------------------------------------------------------------------
 
   Book _rowToBook(Map<String, dynamic> row) {
     final difficultyStr = (row['difficulty'] as String?)?.toLowerCase() ?? '';
@@ -107,14 +101,12 @@ class HomeDataSource {
       'advanced' => BookDifficulty.advanced,
       _ => BookDifficulty.intermediate,
     };
-
     return Book(
       id: row['id'] as String? ?? '',
       title: row['title'] as String? ?? 'Untitled',
       author: row['author'] as String? ?? '',
       coverUrl: row['cover_url'] as String? ?? '',
       difficulty: difficulty,
-      progressPercent: (row['progress_percent'] as num?)?.toDouble() ?? 0.0,
     );
   }
 

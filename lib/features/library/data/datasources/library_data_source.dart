@@ -3,7 +3,6 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../shared/widgets/cards/book_card.dart';
 import '../models/book_filter.dart';
 
-/// Category stub — only id + name needed for filter chips.
 class CategoryStub {
   const CategoryStub({required this.id, required this.name});
 
@@ -11,48 +10,43 @@ class CategoryStub {
   final String name;
 }
 
-/// Data source for library browse and search.
 class LibraryDataSource {
   const LibraryDataSource(this._supabase);
 
   final SupabaseClient _supabase;
 
-  // ---------------------------------------------------------------------------
-  // Books
-  // ---------------------------------------------------------------------------
-
-  /// Returns a paginated list of [Book]s matching [filter].
-  ///
-  /// [page] is zero-based; [pageSize] defaults to 20.
   Future<List<Book>> searchBooks(
     BookFilter filter, {
     int page = 0,
     int pageSize = 20,
   }) async {
+    // Category filter requires a join through book_categories
+    List<String>? categoryBookIds;
+    if (filter.categoryId != null) {
+      final catRows = await _supabase
+          .from('book_categories')
+          .select('book_id')
+          .eq('category_id', filter.categoryId!);
+      categoryBookIds = catRows.map((r) => r['book_id'] as String).toList();
+      if (categoryBookIds.isEmpty) return [];
+    }
+
     var query = _supabase
         .from('books')
-        .select('id, title, author, cover_url, difficulty, is_premium')
+        .select('id, title, author, cover_url, difficulty')
         .eq('is_published', true);
 
-    // Full-text search on title and author
     if (filter.query != null && filter.query!.trim().isNotEmpty) {
       final q = '%${filter.query!.trim()}%';
       query = query.or('title.ilike.$q,author.ilike.$q');
     }
 
-    // Category filter
-    if (filter.categoryId != null) {
-      query = query.eq('category_id', filter.categoryId!);
+    if (categoryBookIds != null) {
+      query = query.inFilter('id', categoryBookIds);
     }
 
-    // Difficulty filter
     if (filter.difficulty != null) {
       query = query.eq('difficulty', filter.difficulty!.dbValue);
-    }
-
-    // Premium filter
-    if (filter.premiumOnly) {
-      query = query.eq('is_premium', true);
     }
 
     final rows = await query
@@ -62,15 +56,11 @@ class LibraryDataSource {
     return rows.map<Book>(_rowToBook).toList();
   }
 
-  // ---------------------------------------------------------------------------
-  // Categories
-  // ---------------------------------------------------------------------------
-
   Future<List<CategoryStub>> fetchCategories() async {
     final rows = await _supabase
         .from('categories')
         .select('id, name')
-        .order('display_order', ascending: true);
+        .order('sort_order', ascending: true);
 
     return rows
         .map<CategoryStub>((row) => CategoryStub(
@@ -80,10 +70,6 @@ class LibraryDataSource {
         .toList();
   }
 
-  // ---------------------------------------------------------------------------
-  // Helper
-  // ---------------------------------------------------------------------------
-
   Book _rowToBook(Map<String, dynamic> row) {
     final difficultyStr = (row['difficulty'] as String?)?.toLowerCase() ?? '';
     final difficulty = switch (difficultyStr) {
@@ -91,7 +77,6 @@ class LibraryDataSource {
       'advanced' => BookDifficulty.advanced,
       _ => BookDifficulty.intermediate,
     };
-
     return Book(
       id: row['id'] as String? ?? '',
       title: row['title'] as String? ?? 'Untitled',

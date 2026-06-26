@@ -28,6 +28,13 @@ VALUES (
 )
 ON CONFLICT (id) DO NOTHING;
 
+-- Link book to Personal Finance and Psychology categories
+INSERT INTO book_categories (book_id, category_id)
+SELECT 'b1000000-0000-0000-0000-000000000001', id
+FROM categories
+WHERE slug IN ('personal-finance', 'psychology')
+ON CONFLICT DO NOTHING;
+
 -- ---------------------------------------------------------------------------
 -- 2. Learning Paths
 -- ---------------------------------------------------------------------------
