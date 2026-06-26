@@ -5,7 +5,6 @@ part 'lesson_model.freezed.dart';
 part 'lesson_model.g.dart';
 
 @freezed
-@JsonSerializable()
 class Lesson with _$Lesson {
   const factory Lesson({
     required String id,

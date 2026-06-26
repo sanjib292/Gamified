@@ -4,7 +4,6 @@ part 'story_mission_model.freezed.dart';
 part 'story_mission_model.g.dart';
 
 @freezed
-@JsonSerializable()
 class StoryChoice with _$StoryChoice {
   const factory StoryChoice({
     required String id,
@@ -19,7 +18,6 @@ class StoryChoice with _$StoryChoice {
 }
 
 @freezed
-@JsonSerializable()
 class StoryNode with _$StoryNode {
   const factory StoryNode({
     required String id,
@@ -33,7 +31,6 @@ class StoryNode with _$StoryNode {
 }
 
 @freezed
-@JsonSerializable()
 class StoryMission with _$StoryMission {
   const factory StoryMission({
     required String id,

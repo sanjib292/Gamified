@@ -4,7 +4,6 @@ part 'profile_model.freezed.dart';
 part 'profile_model.g.dart';
 
 @freezed
-@JsonSerializable()
 class ProfileModel with _$ProfileModel {
   const factory ProfileModel({
     required String id,

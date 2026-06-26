@@ -4,7 +4,6 @@ part 'quiz_model.freezed.dart';
 part 'quiz_model.g.dart';
 
 @freezed
-@JsonSerializable()
 class QuizOption with _$QuizOption {
   const factory QuizOption({
     required String id,
@@ -17,7 +16,6 @@ class QuizOption with _$QuizOption {
 }
 
 @freezed
-@JsonSerializable()
 class QuizQuestion with _$QuizQuestion {
   const factory QuizQuestion({
     required String id,
@@ -35,7 +33,6 @@ class QuizQuestion with _$QuizQuestion {
 }
 
 @freezed
-@JsonSerializable()
 class Quiz with _$Quiz {
   const factory Quiz({
     required String id,

@@ -5,7 +5,6 @@ part 'book_model.freezed.dart';
 part 'book_model.g.dart';
 
 @freezed
-@JsonSerializable()
 class BookModel with _$BookModel {
   const factory BookModel({
     required String id,

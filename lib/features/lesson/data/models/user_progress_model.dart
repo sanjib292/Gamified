@@ -5,7 +5,6 @@ part 'user_progress_model.freezed.dart';
 part 'user_progress_model.g.dart';
 
 @freezed
-@JsonSerializable()
 class UserProgressModel with _$UserProgressModel {
   const factory UserProgressModel({
     required String id,

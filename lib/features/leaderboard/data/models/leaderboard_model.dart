@@ -5,7 +5,6 @@ part 'leaderboard_model.freezed.dart';
 part 'leaderboard_model.g.dart';
 
 @freezed
-@JsonSerializable()
 class LeaderboardEntry with _$LeaderboardEntry {
   const factory LeaderboardEntry({
     required String id,

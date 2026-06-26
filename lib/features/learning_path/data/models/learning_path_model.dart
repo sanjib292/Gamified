@@ -4,7 +4,6 @@ part 'learning_path_model.freezed.dart';
 part 'learning_path_model.g.dart';
 
 @freezed
-@JsonSerializable()
 class LearningPathModel with _$LearningPathModel {
   const factory LearningPathModel({
     required String id,

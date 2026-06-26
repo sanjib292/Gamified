@@ -4,7 +4,6 @@ part 'category_model.freezed.dart';
 part 'category_model.g.dart';
 
 @freezed
-@JsonSerializable()
 class BookCategory with _$BookCategory {
   const factory BookCategory({
     required String id,

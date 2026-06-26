@@ -4,7 +4,6 @@ part 'flashcard_model.freezed.dart';
 part 'flashcard_model.g.dart';
 
 @freezed
-@JsonSerializable()
 class Flashcard with _$Flashcard {
   const factory Flashcard({
     required String id,
@@ -21,7 +20,6 @@ class Flashcard with _$Flashcard {
 }
 
 @freezed
-@JsonSerializable()
 class FlashcardDeck with _$FlashcardDeck {
   const factory FlashcardDeck({
     required String id,

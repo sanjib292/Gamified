@@ -4,7 +4,6 @@ part 'streak_model.freezed.dart';
 part 'streak_model.g.dart';
 
 @freezed
-@JsonSerializable()
 class StreakModel with _$StreakModel {
   const factory StreakModel({
     required String id,

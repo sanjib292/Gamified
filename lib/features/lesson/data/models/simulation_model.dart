@@ -4,7 +4,6 @@ part 'simulation_model.freezed.dart';
 part 'simulation_model.g.dart';
 
 @freezed
-@JsonSerializable()
 class SimOption with _$SimOption {
   const factory SimOption({
     required String label,
@@ -17,7 +16,6 @@ class SimOption with _$SimOption {
 }
 
 @freezed
-@JsonSerializable()
 class SimStep with _$SimStep {
   const factory SimStep({
     required String id,
@@ -31,7 +29,6 @@ class SimStep with _$SimStep {
 }
 
 @freezed
-@JsonSerializable()
 class Simulation with _$Simulation {
   const factory Simulation({
     required String id,

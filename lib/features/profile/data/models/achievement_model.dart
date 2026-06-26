@@ -5,7 +5,6 @@ part 'achievement_model.freezed.dart';
 part 'achievement_model.g.dart';
 
 @freezed
-@JsonSerializable()
 class AchievementModel with _$AchievementModel {
   const factory AchievementModel({
     required String id,
@@ -32,7 +31,6 @@ class AchievementModel with _$AchievementModel {
 String _achievementCategoryToJson(AchievementCategory cat) => cat.toJson();
 
 @freezed
-@JsonSerializable()
 class UserAchievementModel with _$UserAchievementModel {
   const factory UserAchievementModel({
     required String id,
