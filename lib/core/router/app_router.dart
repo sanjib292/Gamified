@@ -134,7 +134,6 @@ final appRouterProvider = Provider<GoRouter>(
         final isAuthenticated = ref.read(isAuthenticatedProvider);
         final location = state.uri.toString();
 
-        // Public routes — never redirect away from these
         const publicRoutes = [
           RouteNames.splash,
           RouteNames.onboarding,
@@ -142,11 +141,17 @@ final appRouterProvider = Provider<GoRouter>(
         ];
         final isPublic = publicRoutes.any((r) => location.startsWith(r));
 
+        // Unauthenticated user on a protected route → auth wall
         if (!isAuthenticated && !isPublic) {
           return RouteNames.auth;
         }
 
-        return null; // No redirect — proceed to requested route
+        // Authenticated user still on auth/onboarding → send home
+        if (isAuthenticated && isPublic && location != RouteNames.splash) {
+          return RouteNames.home;
+        }
+
+        return null;
       },
 
       // -----------------------------------------------------------------------
