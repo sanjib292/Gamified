@@ -70,7 +70,7 @@ class LessonNotifier extends FamilyAsyncNotifier<LessonState, String> {
     final lesson = Lesson(
       id: lessonRow['id'] as String,
       title: lessonRow['title'] as String,
-      type: _parseType(lessonRow['type'] as String? ?? ''),
+      type: LessonType.reading,
     );
 
     return LessonState(lesson: lesson, content: content);
@@ -78,8 +78,6 @@ class LessonNotifier extends FamilyAsyncNotifier<LessonState, String> {
 
   /// Called when the user completes the lesson.
   Future<void> completeLesson({
-    required String pathId,
-    required String bookId,
     required int score,
     required int xpEarned,
   }) async {
@@ -94,8 +92,6 @@ class LessonNotifier extends FamilyAsyncNotifier<LessonState, String> {
     await ds.submitProgress(
       userId: userId,
       lessonId: arg,
-      pathId: pathId,
-      bookId: bookId,
       score: score,
       xpEarned: xpEarned,
       durationSeconds: durationSecs,
@@ -110,13 +106,6 @@ class LessonNotifier extends FamilyAsyncNotifier<LessonState, String> {
     );
   }
 
-  LessonType _parseType(String type) => switch (type.toLowerCase()) {
-        'quiz' => LessonType.quiz,
-        'flashcard' => LessonType.flashcard,
-        'challenge' => LessonType.challenge,
-        'summary' => LessonType.summary,
-        _ => LessonType.reading,
-      };
 }
 
 final lessonProvider =

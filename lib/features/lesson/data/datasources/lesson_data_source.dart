@@ -18,23 +18,22 @@ class LessonDataSource {
     final results = await Future.wait([
       _supabase
           .from('lessons')
-          .select(
-              'id, title, type, path_id, display_order, estimated_minutes')
+          .select('id, title, learning_path_id, book_id, sort_order, estimated_minutes, xp_reward')
           .eq('id', lessonId)
           .single(),
       _supabase
           .from('lesson_content')
-          .select('type, content_json')
+          .select('content_type, content')
           .eq('lesson_id', lessonId)
-          .single(),
+          .maybeSingle(),
     ]);
 
     final lessonRow = results[0] as Map<String, dynamic>;
-    final contentRow = results[1] as Map<String, dynamic>;
+    final contentRow = results[1] as Map<String, dynamic>? ?? {};
 
-    final type = contentRow['type'] as String? ?? 'article';
+    final type = contentRow['content_type'] as String? ?? 'quiz';
     final contentJson =
-        contentRow['content_json'] as Map<String, dynamic>? ?? {};
+        contentRow['content'] as Map<String, dynamic>? ?? {};
     final block = ContentBlock.fromJson(contentJson, type);
 
     return {
@@ -50,8 +49,6 @@ class LessonDataSource {
   Future<void> submitProgress({
     required String userId,
     required String lessonId,
-    required String pathId,
-    required String bookId,
     required int score,
     required int xpEarned,
     required int durationSeconds,
@@ -65,11 +62,10 @@ class LessonDataSource {
       _supabase.from('user_progress').upsert({
         'user_id': userId,
         'lesson_id': lessonId,
-        'path_id': pathId,
-        'book_id': bookId,
         'status': 'completed',
-        'score': score,
-        'last_accessed_at': now,
+        'score_pct': score,
+        'xp_earned': xpEarned,
+        'last_attempted_at': now,
         'completed_at': now,
       }, onConflict: 'user_id,lesson_id'),
 
@@ -88,9 +84,10 @@ class LessonDataSource {
         'id': attemptId,
         'user_id': userId,
         'lesson_id': lessonId,
-        'score': score,
+        'score_pct': score,
         'xp_earned': xpEarned,
         'duration_seconds': durationSeconds,
+        'completed': true,
         'created_at': now,
       }),
     ]);

@@ -124,8 +124,6 @@ class _LessonPageState extends ConsumerState<LessonPage> {
                   ref
                       .read(lessonProvider(widget.lessonId).notifier)
                       .completeLesson(
-                        pathId: widget.pathId,
-                        bookId: widget.bookId,
                         score: _accumulatedScore,
                         xpEarned: _accumulatedXp > 0
                             ? _accumulatedXp
