@@ -30,6 +30,17 @@ CREATE INDEX IF NOT EXISTS idx_achievements_category ON achievements (category);
 CREATE INDEX IF NOT EXISTS idx_achievements_sort     ON achievements (sort_order);
 CREATE INDEX IF NOT EXISTS idx_achievements_cond_gin ON achievements USING GIN (condition_value);
 
+-- Rename columns if table existed under old names (idempotent — catches undefined_column)
+DO $$ BEGIN
+  ALTER TABLE achievements RENAME COLUMN badge_color TO color_hex;
+EXCEPTION WHEN undefined_column THEN NULL;
+END $$;
+
+DO $$ BEGIN
+  ALTER TABLE achievements RENAME COLUMN icon_url TO icon_name;
+EXCEPTION WHEN undefined_column THEN NULL;
+END $$;
+
 -- ============================================================
 -- User Achievements (join table)
 -- ============================================================
