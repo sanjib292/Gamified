@@ -7,8 +7,7 @@ import '../../../../core/constants/route_names.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
-import '../../../../shared/widgets/cards/lesson_node_card.dart'
-    as shared show LessonNodeCard, Lesson, LessonStatus, LessonType;
+import '../../../../shared/widgets/cards/lesson_node_card.dart';
 import '../../../../shared/widgets/feedback/mq_fullpage_loading.dart';
 import '../../data/models/learning_path_model.dart';
 import '../providers/learning_path_notifier.dart';
@@ -213,29 +212,21 @@ class _NodeMapCanvas extends StatelessWidget {
       } else {
         final lessonItem = item as _LessonNodeItem;
         final lesson = lessonItem.lesson;
-        final featureStatus =
+        final nodeStatus =
             detail.progressMap[lesson.id] ?? LessonStatus.locked;
-        final sharedStatus = _toSharedStatus(featureStatus);
         final x = _nodeX(lessonItem.index, centerX, amplitude, nodeSize);
         final y = runningY;
         final delay = Duration(milliseconds: nodeIndex * 60);
-
-        // Map feature Lesson to shared Lesson.
-        final sharedLesson = shared.Lesson(
-          id: lesson.id,
-          title: lesson.title,
-          type: _toSharedLessonType(lesson.type),
-        );
 
         widget = Positioned(
           top: y,
           left: x,
           child: Column(
             children: [
-              shared.LessonNodeCard(
-                lesson: sharedLesson,
-                status: sharedStatus,
-                onTap: featureStatus != LessonStatus.locked
+              LessonNodeCard(
+                lesson: lesson,
+                status: nodeStatus,
+                onTap: nodeStatus != LessonStatus.locked
                     ? () => context.push(
                         RouteNames.lessonPath(bookId, pathId, lesson.id))
                     : null,
@@ -275,26 +266,8 @@ class _NodeMapCanvas extends StatelessWidget {
     return center - size / 2 + offset;
   }
 
-  /// Maps [LessonStatus] from the feature layer to the shared widget enum.
-  shared.LessonStatus _toSharedStatus(LessonStatus status) =>
-      switch (status) {
-        LessonStatus.completed => shared.LessonStatus.completed,
-        LessonStatus.active => shared.LessonStatus.active,
-        LessonStatus.available => shared.LessonStatus.available,
-        LessonStatus.locked => shared.LessonStatus.locked,
-      };
-
-  /// Maps the path-painter [LessonStatus] (used by CustomPainter).
   LessonStatus _toPathPainterStatus(LessonStatus? status) =>
       status ?? LessonStatus.locked;
-
-  shared.LessonType _toSharedLessonType(LessonType type) => switch (type) {
-        LessonType.quiz => shared.LessonType.quiz,
-        LessonType.flashcard => shared.LessonType.flashcard,
-        LessonType.challenge => shared.LessonType.challenge,
-        LessonType.summary => shared.LessonType.summary,
-        LessonType.reading => shared.LessonType.reading,
-      };
 }
 
 // ---------------------------------------------------------------------------

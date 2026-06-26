@@ -11,6 +11,7 @@ import '../../../../shared/widgets/cards/book_card.dart';
 import '../../../../shared/widgets/feedback/mq_empty_state.dart';
 import '../../../../shared/widgets/feedback/mq_error_widget.dart';
 import '../../../../shared/widgets/feedback/mq_loading_shimmer.dart';
+import '../../data/models/book_filter.dart';
 import '../providers/library_notifier.dart';
 import '../widgets/filter_chips_row.dart';
 import '../widgets/search_bar_widget.dart';
