@@ -60,8 +60,8 @@ ON CONFLICT (id) DO NOTHING;
 -- 3. Lessons (Path 1: Foundations — 5 lessons)
 -- ---------------------------------------------------------------------------
 INSERT INTO lessons (
-    id, book_id, learning_path_id, title, description,
-    sort_order, duration_minutes, difficulty,
+    id, book_id, learning_path_id, title, subtitle,
+    sort_order, estimated_minutes,
     is_published, is_free_preview, xp_reward
 )
 VALUES
@@ -70,40 +70,40 @@ VALUES
         'b1000000-0000-0000-0000-000000000001',
         'a0100000-0000-0000-0000-000000000001',
         'No One''s Crazy',
-        'Everyone has a unique experience of money shaped by their generation, upbringing, and luck. Understanding this prevents us from judging others — or ourselves — too harshly.',
-        1, 8, 'beginner', true, true, 50
+        'Everyone has a unique experience of money shaped by their generation, upbringing, and luck.',
+        1, 8, true, true, 50
     ),
     (
         'be100000-0000-0000-0000-000000000002',
         'b1000000-0000-0000-0000-000000000001',
         'a0100000-0000-0000-0000-000000000001',
         'Luck & Risk',
-        'Nothing is as good or as bad as it seems. Luck and risk are siblings — both the invisible forces that shape every financial outcome, often indistinguishable from skill.',
-        2, 9, 'beginner', true, false, 50
+        'Nothing is as good or as bad as it seems. Luck and risk are siblings — invisible forces that shape every financial outcome.',
+        2, 9, true, false, 50
     ),
     (
         'be100000-0000-0000-0000-000000000003',
         'b1000000-0000-0000-0000-000000000001',
         'a0100000-0000-0000-0000-000000000001',
         'Never Enough',
-        'The hardest financial skill is getting the goalpost to stop moving. Social comparison and the insatiable desire for more are the enemies of contentment and sound financial decisions.',
-        3, 7, 'beginner', true, false, 50
+        'The hardest financial skill is getting the goalpost to stop moving.',
+        3, 7, true, false, 50
     ),
     (
         'be100000-0000-0000-0000-000000000004',
         'b1000000-0000-0000-0000-000000000001',
         'a0100000-0000-0000-0000-000000000001',
         'Confounding Compounding',
-        'Warren Buffett''s secret is not just his returns — it''s time. The counter-intuitive power of compounding only becomes visible across decades, not quarters.',
-        4, 10, 'beginner', true, false, 60
+        'Warren Buffett''s secret is not just his returns — it''s time. The power of compounding only becomes visible across decades.',
+        4, 10, true, false, 60
     ),
     (
         'be100000-0000-0000-0000-000000000005',
         'b1000000-0000-0000-0000-000000000001',
         'a0100000-0000-0000-0000-000000000001',
         'Getting Wealthy vs Staying Wealthy',
-        'Getting money and keeping money are two different skills. Getting money requires optimism and risk. Keeping it requires humility, frugality, and the acceptance that some gains were luck.',
-        5, 11, 'beginner', true, false, 60
+        'Getting money and keeping money are two different skills. Keeping it requires humility and frugality.',
+        5, 11, true, false, 60
     )
 ON CONFLICT (id) DO NOTHING;
 
@@ -111,13 +111,12 @@ ON CONFLICT (id) DO NOTHING;
 -- 4. Quiz content for Lesson 1: No One's Crazy
 -- ---------------------------------------------------------------------------
 INSERT INTO lesson_content (
-    id, lesson_id, content_type, sort_order, content, title
+    id, lesson_id, content_type, content
 )
 VALUES (
     'ac100000-0000-0000-0000-000000000001',
     'be100000-0000-0000-0000-000000000001',
     'quiz',
-    1,
     '{
         "instructions": "Test your understanding of the No One''s Crazy chapter.",
         "pass_score_pct": 70,
@@ -162,8 +161,7 @@ VALUES (
                 "explanation": "Housel explicitly uses the lottery as an example: for someone who has never seen wealth built through investing, buying a lottery ticket is the only tangible shot at a different life — making it psychologically rational even if statistically poor."
             }
         ]
-    }'::jsonb,
-    'Knowledge Check: No One''s Crazy'
+    }'::jsonb
 )
 ON CONFLICT (id) DO NOTHING;
 
