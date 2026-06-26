@@ -174,15 +174,10 @@ class _BannerPlaceholder extends StatelessWidget {
         ),
       ),
       child: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(AppSpacing.md),
-          child: Text(
-            book.title,
-            style: AppTextStyles.titleLarge.copyWith(
-              color: Colors.white,
-            ),
-            textAlign: TextAlign.center,
-          ),
+        child: Icon(
+          Icons.menu_book_rounded,
+          color: Colors.white.withOpacity(0.3),
+          size: 80,
         ),
       ),
     );

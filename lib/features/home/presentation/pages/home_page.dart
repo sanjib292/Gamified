@@ -105,7 +105,7 @@ class _HomeAppBar extends ConsumerWidget {
       floating: true,
       snap: true,
       elevation: 0,
-      toolbarHeight: 72,
+      toolbarHeight: 100,
       flexibleSpace: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(
