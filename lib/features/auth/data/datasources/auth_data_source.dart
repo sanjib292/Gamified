@@ -1,46 +1,31 @@
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 /// Low-level data source for authentication operations.
 ///
-/// Interacts directly with [SupabaseClient] and [GoogleSignIn]. Error mapping
-/// to [AppException] happens in [AuthRepositoryImpl], not here.
+/// Uses Supabase's built-in OAuth flow (opens system browser, redirects back
+/// via deep link). Error mapping happens in [AuthRepositoryImpl].
 class AuthDataSource {
-  AuthDataSource(this._supabase) : _googleSignIn = GoogleSignIn();
+  AuthDataSource(this._supabase);
 
   final SupabaseClient _supabase;
-  final GoogleSignIn _googleSignIn;
 
   GoTrueClient get _auth => _supabase.auth;
 
-  /// Initiates Google OAuth sign-in and passes the ID token to Supabase.
+  /// Launches Supabase Google OAuth flow.
   ///
-  /// Returns the [AuthResponse] from Supabase on success.
-  Future<AuthResponse> signInWithGoogle() async {
-    final googleAccount = await _googleSignIn.signIn();
-    if (googleAccount == null) {
-      throw Exception('Google sign-in was cancelled by the user.');
-    }
-
-    final googleAuth = await googleAccount.authentication;
-    final idToken = googleAuth.idToken;
-    final accessToken = googleAuth.accessToken;
-
-    if (idToken == null) {
-      throw Exception('Google sign-in did not return an ID token.');
-    }
-
-    return _auth.signInWithIdToken(
-      provider: OAuthProvider.google,
-      idToken: idToken,
-      accessToken: accessToken,
+  /// Opens a browser for the user to authenticate. The session is set
+  /// asynchronously when the deep link `com.mindquest.app://login-callback`
+  /// is received. Listen to [authStateStream] for the sign-in event.
+  Future<void> signInWithGoogle() async {
+    await _auth.signInWithOAuth(
+      OAuthProvider.google,
+      redirectTo: 'com.mindquest.app://login-callback',
     );
   }
 
-  /// Signs out of both Supabase and Google.
+  /// Signs out of Supabase.
   Future<void> signOut() async {
     await _auth.signOut();
-    await _googleSignIn.signOut();
   }
 
   /// Returns the current [Session] or `null` if not authenticated.

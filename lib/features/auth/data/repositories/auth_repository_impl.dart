@@ -17,22 +17,13 @@ class AuthRepositoryImpl implements AuthRepository {
   final AuthDataSource _dataSource;
 
   @override
-  Future<User> signInWithGoogle() async {
+  Future<void> signInWithGoogle() async {
     try {
-      final response = await _dataSource.signInWithGoogle();
-      final user = response.user;
-      if (user == null) {
-        throw const AuthException(message: 'Sign-in succeeded but returned no user.');
-      }
-      return user;
+      await _dataSource.signInWithGoogle();
     } on supa.AuthException catch (e) {
       throw AuthException(message: e.message);
     } on Exception catch (e) {
-      final msg = e.toString();
-      if (msg.contains('cancelled')) {
-        throw const AuthException(message: 'Sign-in was cancelled.');
-      }
-      throw AuthException(message: msg);
+      throw AuthException(message: e.toString());
     }
   }
 

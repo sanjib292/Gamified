@@ -7,11 +7,11 @@ import '../../../../core/error/app_exception.dart';
 /// All methods return [Future]s that throw [AppException] subtypes on failure —
 /// never raw Supabase or platform exceptions.
 abstract interface class AuthRepository {
-  /// Signs the user in with Google OAuth.
+  /// Launches Google OAuth via Supabase (opens system browser).
   ///
-  /// Returns the signed-in [User] on success.
-  /// Throws [AuthException] on failure.
-  Future<User> signInWithGoogle();
+  /// Completes after the browser is opened. The actual sign-in result arrives
+  /// via [authStateStream]. Throws [AuthException] on failure.
+  Future<void> signInWithGoogle();
 
   /// Signs the current user out of Supabase and Google.
   ///

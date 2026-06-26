@@ -50,16 +50,19 @@ class AuthNotifier extends AsyncNotifier<User?> {
     return initialUser;
   }
 
-  /// Signs the user in with Google.
+  /// Launches Google OAuth. The auth stream in [build] updates state on completion.
   Future<void> signInWithGoogle() async {
     state = const AsyncLoading();
-    final repo = ref.read(authRepositoryProvider);
-    final result = await AsyncValue.guard<User>(repo.signInWithGoogle);
-    state = result.when(
-      data: (user) => AsyncData<User?>(user),
-      loading: () => const AsyncLoading<User?>(),
-      error: (e, st) => AsyncError<User?>(e, st),
-    );
+    try {
+      await ref.read(authRepositoryProvider).signInWithGoogle();
+      // Browser opened — state will be set by the auth stream when sign-in
+      // completes. Reset to null if user closes browser without signing in.
+      if (state.isLoading) {
+        state = const AsyncData(null);
+      }
+    } catch (e, st) {
+      state = AsyncError(e, st);
+    }
   }
 
   /// Signs the current user out.
