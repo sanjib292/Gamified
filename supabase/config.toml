@@ -9,8 +9,19 @@ port = 54322
 [studio]
 port = 54323
 
-[inbucket]
+[local_smtp]
 port = 54324
 
 [storage]
-buckets = ["book-covers", "user-avatars", "lesson-media", "lottie-animations"]
+
+[storage.buckets.book-covers]
+public = true
+
+[storage.buckets.user-avatars]
+public = true
+
+[storage.buckets.lesson-media]
+public = false
+
+[storage.buckets.lottie-animations]
+public = true
