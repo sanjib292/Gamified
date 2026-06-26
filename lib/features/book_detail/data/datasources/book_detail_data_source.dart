@@ -6,22 +6,16 @@ import '../../../../shared/widgets/cards/book_card.dart';
 import '../../../../shared/widgets/cards/lesson_node_card.dart';
 import '../models/book_detail_model.dart';
 
-/// Fetches all data needed to render the book detail screen.
-///
-/// Combines book metadata, learning paths with nested lessons, available
-/// achievements, and (optionally) user progress in a small number of
-/// Supabase queries run concurrently.
 class BookDetailDataSource {
   const BookDetailDataSource(this._supabase);
 
   final SupabaseClient _supabase;
 
   Future<BookDetail> fetchBookDetail(String bookId, String? userId) async {
-    // Run queries concurrently.
     final results = await Future.wait([
       _fetchBook(bookId),
       _fetchPaths(bookId),
-      _fetchAchievements(bookId),
+      _fetchAchievements(),
       if (userId != null) _fetchUserProgress(bookId, userId),
     ]);
 
@@ -31,7 +25,6 @@ class BookDetailDataSource {
     final userProgress =
         (results.length > 3 ? results[3] : null) as UserProgress?;
 
-    // Count totals across all paths.
     final totalLessons = paths.fold<int>(0, (sum, p) => sum + p.lessons.length);
     final completedLessons = userProgress?.completedLessons ?? 0;
 
@@ -45,14 +38,10 @@ class BookDetailDataSource {
     );
   }
 
-  // ---------------------------------------------------------------------------
-  // Private helpers
-  // ---------------------------------------------------------------------------
-
   Future<Book> _fetchBook(String bookId) async {
     final row = await _supabase
         .from('books')
-        .select('id, title, author, cover_url, difficulty, estimated_minutes, key_concepts')
+        .select('id, title, author, cover_url, difficulty, estimated_minutes')
         .eq('id', bookId)
         .single();
     return _rowToBook(row);
@@ -61,17 +50,18 @@ class BookDetailDataSource {
   Future<List<LearningPath>> _fetchPaths(String bookId) async {
     final pathRows = await _supabase
         .from('learning_paths')
-        .select('id, book_id, title, description, display_order')
+        .select('id, book_id, title, description, sort_order')
         .eq('book_id', bookId)
-        .order('display_order');
+        .order('sort_order');
 
     final List<LearningPath> paths = [];
     for (final pathRow in pathRows) {
       final lessonRows = await _supabase
           .from('lessons')
-          .select('id, title, type, display_order, estimated_minutes')
-          .eq('path_id', pathRow['id'] as String)
-          .order('display_order');
+          .select('id, title, sort_order, estimated_minutes, is_free_preview')
+          .eq('learning_path_id', pathRow['id'] as String)
+          .eq('is_published', true)
+          .order('sort_order');
 
       final lessons = lessonRows.map<Lesson>(_rowToLesson).toList();
 
@@ -80,49 +70,56 @@ class BookDetailDataSource {
         bookId: pathRow['book_id'] as String,
         title: pathRow['title'] as String,
         description: pathRow['description'] as String? ?? '',
-        displayOrder: (pathRow['display_order'] as num).toInt(),
+        displayOrder: (pathRow['sort_order'] as num?)?.toInt() ?? 0,
         lessons: lessons,
       ));
     }
     return paths;
   }
 
-  Future<List<Achievement>> _fetchAchievements(String bookId) async {
+  Future<List<Achievement>> _fetchAchievements() async {
     final rows = await _supabase
         .from('achievements')
         .select('id, title, description, icon_name, color_hex')
-        .eq('book_id', bookId);
+        .order('sort_order')
+        .limit(10);
 
     return rows.map<Achievement>(_rowToAchievement).toList();
   }
 
   Future<UserProgress?> _fetchUserProgress(
       String bookId, String userId) async {
-    final rows = await _supabase
-        .from('user_progress')
-        .select(
-            'user_id, book_id, progress_percent, completed_lessons, last_accessed_at')
+    // Get published lesson IDs for this book
+    final lessonRows = await _supabase
+        .from('lessons')
+        .select('id')
         .eq('book_id', bookId)
-        .eq('user_id', userId)
-        .limit(1);
+        .eq('is_published', true);
 
-    if (rows.isEmpty) return null;
-    final row = rows.first;
+    if (lessonRows.isEmpty) return null;
+
+    final lessonIds = lessonRows.map((r) => r['id'] as String).toList();
+
+    // Count completed lessons
+    final result = await _supabase
+        .from('user_progress')
+        .select()
+        .eq('user_id', userId)
+        .eq('status', 'completed')
+        .inFilter('lesson_id', lessonIds)
+        .count(CountOption.exact);
+
+    final completedCount = result.count;
+    if (completedCount == 0) return null;
+
     return UserProgress(
-      userId: row['user_id'] as String,
-      bookId: row['book_id'] as String,
-      progressPercent:
-          (row['progress_percent'] as num?)?.toDouble() ?? 0.0,
-      completedLessons: (row['completed_lessons'] as num?)?.toInt() ?? 0,
-      lastAccessedAt: DateTime.tryParse(
-              row['last_accessed_at'] as String? ?? '') ??
-          DateTime.now(),
+      userId: userId,
+      bookId: bookId,
+      progressPercent: completedCount / lessonIds.length * 100,
+      completedLessons: completedCount,
+      lastAccessedAt: DateTime.now(),
     );
   }
-
-  // ---------------------------------------------------------------------------
-  // Row mappers
-  // ---------------------------------------------------------------------------
 
   Book _rowToBook(Map<String, dynamic> row) {
     final difficultyStr =
@@ -142,18 +139,10 @@ class BookDetailDataSource {
   }
 
   Lesson _rowToLesson(Map<String, dynamic> row) {
-    final typeStr = (row['type'] as String?)?.toLowerCase() ?? '';
-    final type = switch (typeStr) {
-      'quiz' => LessonType.quiz,
-      'flashcard' => LessonType.flashcard,
-      'challenge' => LessonType.challenge,
-      'summary' => LessonType.summary,
-      _ => LessonType.reading,
-    };
     return Lesson(
       id: row['id'] as String,
       title: row['title'] as String,
-      type: type,
+      type: LessonType.reading,
     );
   }
 
